@@ -1,6 +1,6 @@
 # Weather Kiosk
 
-A lightweight HTML/CSS/JS kiosk page for a Raspberry Pi with a 5" 800×480 touchscreen, styled like a Cross Technology / La Crosse weather panel. The 800×480 design canvas now scales to fit any landscape viewport, so the same page also works full-screen on a desktop monitor or a tablet in landscape.
+A lightweight HTML/CSS/JS kiosk page for a Tablet or a Raspberry Pi with a 5" 800×480 or more touchscreen, styled like a hardware weather panel device. The 800×480 design canvas now scales to fit any landscape viewport, so the same page also works full-screen on a desktop monitor or a tablet in landscape.
 
 No build step, no backend, no API key. Just static files served by anything (or opened from `file://`).
 
