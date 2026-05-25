@@ -449,7 +449,6 @@
   function openLocationDialog() {
     const dlg = $("loc-dialog");
     dlg.hidden = false;
-    document.body.style.cursor = "auto"; // restore cursor while interacting
     populateCountrySelect();
     syncLanguageSelect();
     syncCountrySelect();
@@ -461,7 +460,6 @@
 
   function closeLocationDialog() {
     $("loc-dialog").hidden = true;
-    document.body.style.cursor = "none";
   }
 
   function setHint(msg, isError) {
@@ -731,13 +729,27 @@
   async function resolveDepartmentCode() {
     const lat = Number(CFG.latitude);
     const lon = Number(CFG.longitude);
-    const url = `https://geo.api.gouv.fr/communes?lat=${lat}&lon=${lon}&fields=codeDepartement&format=json&geometry=centre`;
+    const url = `https://geo.api.gouv.fr/communes?lat=${lat}&lon=${lon}&fields=codeDepartement,departement&format=json&geometry=centre`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("geo.api.gouv.fr HTTP " + res.status);
     const arr = await res.json();
     if (!Array.isArray(arr) || !arr.length) return null;
-    return arr[0].codeDepartement || null;
+    const c = arr[0];
+    const code = c.codeDepartement || null;
+    if (!code) return null;
+    const name = (c.departement && c.departement.nom) || "";
+    deptSlug = slugifyDept(name);
+    return code;
   }
+
+  // Slugify a French department name into the form used by
+  // vigilance.meteofrance.fr URLs (e.g. "Loire-Atlantique" -> "loire-atlantique").
+  function slugifyDept(s) {
+    if (!s) return "";
+    return s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+  let deptSlug = "";
 
   async function fetchAlerts() {
     if ((CFG.countryCode || "").toUpperCase() !== "FR") {
@@ -747,16 +759,11 @@
     try {
       const dept = await resolveDepartmentCode();
       if (!dept) { clearAlertChips(); return; }
-
-      // Fetch today (J0) and tomorrow (J+1) in parallel.
-      const [j0, j1] = await Promise.all([
-        fetchVigilance(dept, null),
-        fetchVigilance(dept, "J1"),
-      ]);
-
+      // Only today's bulletin is rendered. Rendering J+1 on the
+      // "Tomorrow" card without J+2/J+3 was confusing.
+      const j0 = await fetchVigilance(dept, null);
       const byDay = {};
       mergeVigilanceInto(byDay, j0);
-      mergeVigilanceInto(byDay, j1);
 
       // Convert reason sets to arrays for easier rendering.
       alertsByDay = {};
@@ -765,6 +772,7 @@
           color: v.color,
           topReasonIds: Array.from(v.topReasons),
           allReasonIds: Array.from(v.allReasons),
+          dept,
         };
       }
       renderAlertChips();
@@ -857,34 +865,30 @@
       if (a && a.color >= 2) {
         const cls = ALERT_LEVELS[a.color];
         const fallbackKey = "alert" + cls.charAt(0).toUpperCase() + cls.slice(1);
-        todayChip.className = `alert-chip alert-${cls}`;
+        todayChip.className = `alert-chip alert-${cls} alert-link`;
         todayChip.textContent = chipLabel(a.topReasonIds, fallbackKey);
         todayChip.title = reasonText(a.allReasonIds);
+        // Show as a link to the official Vigilance page for this dept.
+        const slug = deptSlug || "";
+        const href = slug
+          ? `https://vigilance.meteofrance.fr/fr/${slug}`
+          : "https://vigilance.meteofrance.fr/";
+        todayChip.setAttribute("href", href);
+        todayChip.setAttribute("target", "_blank");
+        todayChip.setAttribute("rel", "noopener");
         todayChip.hidden = false;
       } else {
         todayChip.hidden = true;
         todayChip.className = "alert-chip";
         todayChip.textContent = "";
         todayChip.title = "";
+        todayChip.removeAttribute("href");
       }
     }
 
-    // Forecast cards: each card has a data-date attribute we set in renderForecast.
-    document.querySelectorAll("#forecast .fc-card").forEach((card) => {
-      const existing = card.querySelector(".alert-chip");
-      if (existing) existing.remove();
-      const key = card.dataset.date;
-      if (!key) return;
-      const a = alertsByDay[key];
-      if (!a || a.color < 2) return;
-      const cls = ALERT_LEVELS[a.color];
-      const fallbackKey = "alert" + cls.charAt(0).toUpperCase() + cls.slice(1);
-      const chip = chipFor(a.color, chipLabel(a.topReasonIds, fallbackKey));
-      if (chip) {
-        chip.title = reasonText(a.allReasonIds);
-        card.appendChild(chip);
-      }
-    });
+    // No chips on forecast cards: showing only J+1 without J+2/J+3
+    // would be misleading. Make sure any leftover chip is removed.
+    document.querySelectorAll("#forecast .alert-chip").forEach((el) => el.remove());
   }
 
   // ---- Fetch loop ------------------------------------------------------
