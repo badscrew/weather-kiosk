@@ -30,45 +30,59 @@
   loadSavedLocation();
 
   // ---- WMO weather code mapping ---------------------------------------
-  // Labels come from i18n.js (tWmo). The icon table is shared across
-  // languages.
+  // Labels come from i18n.js (tWmo). The icon table maps WMO codes to
+  // self-hosted SVG files in ./icons/, so the visual is identical on every
+  // device and doesn't depend on the OS emoji font.
+  const ICON = (name) => `icons/${name}.svg`;
   const WMO_ICONS = {
-    0:  { day: "☀️", night: "🌙" },
-    1:  { day: "🌤️", night: "🌙" },
-    2:  { day: "⛅",  night: "☁️" },
-    3:  { day: "☁️", night: "☁️" },
-    45: { day: "🌫️", night: "🌫️" },
-    48: { day: "🌫️", night: "🌫️" },
-    51: { day: "🌦️", night: "🌧️" },
-    53: { day: "🌦️", night: "🌧️" },
-    55: { day: "🌧️", night: "🌧️" },
-    56: { day: "🌧️", night: "🌧️" },
-    57: { day: "🌧️", night: "🌧️" },
-    61: { day: "🌦️", night: "🌧️" },
-    63: { day: "🌧️", night: "🌧️" },
-    65: { day: "🌧️", night: "🌧️" },
-    66: { day: "🌧️", night: "🌧️" },
-    67: { day: "🌧️", night: "🌧️" },
-    71: { day: "🌨️", night: "🌨️" },
-    73: { day: "❄️", night: "❄️" },
-    75: { day: "❄️", night: "❄️" },
-    77: { day: "🌨️", night: "🌨️" },
-    80: { day: "🌦️", night: "🌧️" },
-    81: { day: "🌧️", night: "🌧️" },
-    82: { day: "⛈️", night: "⛈️" },
-    85: { day: "🌨️", night: "🌨️" },
-    86: { day: "❄️", night: "❄️" },
-    95: { day: "⛈️", night: "⛈️" },
-    96: { day: "⛈️", night: "⛈️" },
-    99: { day: "⛈️", night: "⛈️" },
+    0:  { day: ICON("sun"),               night: ICON("moon") },
+    1:  { day: ICON("partly-cloudy-day"), night: ICON("moon") },
+    2:  { day: ICON("partly-cloudy-day"), night: ICON("partly-cloudy-night") },
+    3:  { day: ICON("cloudy"),            night: ICON("cloudy") },
+    45: { day: ICON("fog"),               night: ICON("fog") },
+    48: { day: ICON("fog"),               night: ICON("fog") },
+    51: { day: ICON("drizzle"),           night: ICON("drizzle") },
+    53: { day: ICON("drizzle"),           night: ICON("drizzle") },
+    55: { day: ICON("rain"),              night: ICON("rain") },
+    56: { day: ICON("drizzle"),           night: ICON("drizzle") },
+    57: { day: ICON("drizzle"),           night: ICON("drizzle") },
+    61: { day: ICON("rain"),              night: ICON("rain") },
+    63: { day: ICON("rain"),              night: ICON("rain") },
+    65: { day: ICON("rain"),              night: ICON("rain") },
+    66: { day: ICON("rain"),              night: ICON("rain") },
+    67: { day: ICON("rain"),              night: ICON("rain") },
+    71: { day: ICON("snow"),              night: ICON("snow") },
+    73: { day: ICON("snow"),              night: ICON("snow") },
+    75: { day: ICON("snow"),              night: ICON("snow") },
+    77: { day: ICON("snow"),              night: ICON("snow") },
+    80: { day: ICON("rain"),              night: ICON("rain") },
+    81: { day: ICON("rain"),              night: ICON("rain") },
+    82: { day: ICON("rain"),              night: ICON("rain") },
+    85: { day: ICON("snow"),              night: ICON("snow") },
+    86: { day: ICON("snow"),              night: ICON("snow") },
+    95: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
+    96: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
+    99: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
   };
+  const FALLBACK_ICON = ICON("unknown");
 
   function describe(code, isDay) {
-    const ico = WMO_ICONS[code] || { day: "❔", night: "❔" };
+    const ico = WMO_ICONS[code];
+    const src = ico ? (isDay ? ico.day : ico.night) : FALLBACK_ICON;
     return {
       label: window.I18N ? window.I18N.tWmo(code) : "",
-      icon: isDay ? ico.day : ico.night,
+      icon: src,
     };
+  }
+
+  // Build an <img> element pointing at one of our SVG icons. The label is
+  // used as alt text so screen readers can still announce the condition.
+  function iconImg(src, label) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = label || "";
+    img.draggable = false;
+    return img;
   }
 
   // ---- Units helpers ---------------------------------------------------
@@ -190,7 +204,7 @@
     const isDay = c.is_day === 1;
     const w = describe(c.weather_code, isDay);
 
-    $("today-icon").textContent = w.icon;
+    $("today-icon").replaceChildren(iconImg(w.icon, w.label));
     $("today-temp").textContent = fmtInt(c.temperature_2m);
     $("today-cond").textContent = w.label;
     $("today-feels").textContent = fmtInt(c.apparent_temperature) + "°";
@@ -232,14 +246,15 @@
       card.dataset.date = d.time[i];
       card.innerHTML = `
         <div class="fc-day">${dayName(d.time[i], i)}</div>
-        <div class="fc-icon">${w.icon}</div>
+        <div class="fc-icon"></div>
         <div class="fc-cond">${w.label}</div>
         <div class="fc-temps">
           <span class="fc-high">${fmtInt(d.temperature_2m_max[i])}°</span>
           <span class="fc-low">${fmtInt(d.temperature_2m_min[i])}°</span>
         </div>
-        <div class="fc-precip">💧 ${fmtInt(d.precipitation_probability_max[i])}%</div>
+        <div class="fc-precip"><img class="fc-precip-icon" src="icons/droplet.svg" alt=""/>${fmtInt(d.precipitation_probability_max[i])}%</div>
       `;
+      card.querySelector(".fc-icon").appendChild(iconImg(w.icon, w.label));
       root.appendChild(card);
     }
     // Alerts may already be loaded; reapply chips to the freshly built cards.

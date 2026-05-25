@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <mask id="mn">
+      <rect width="64" height="64" fill="white"/>
+      <circle cx="56" cy="14" r="14" fill="black"/>
+    </mask>
+  </defs>
+  <circle cx="46" cy="20" r="14" fill="#e8e2c4" mask="url(#mn)"/>
+  <path fill="#c8d0e0" d="M10 50 Q4 50 4 42 Q4 34 14 34 Q17 25 26 25 Q37 25 39 34 Q49 34 49 42 Q49 50 42 50 Z"/>
+</svg>

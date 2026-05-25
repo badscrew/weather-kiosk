@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <g stroke="#f6c33d" stroke-width="3" stroke-linecap="round">
+    <!-- 8 symmetric rays around sun center (46, 20) -->
+    <line x1="46" y1="3"  x2="46" y2="9"/>
+    <line x1="46" y1="31" x2="46" y2="37"/>
+    <line x1="29" y1="20" x2="35" y2="20"/>
+    <line x1="57" y1="20" x2="63" y2="20"/>
+    <line x1="34"   y1="8"    x2="38.24" y2="12.24"/>
+    <line x1="53.76" y1="27.76" x2="58"    y2="32"/>
+    <line x1="34"   y1="32"   x2="38.24" y2="27.76"/>
+    <line x1="53.76" y1="12.24" x2="58"    y2="8"/>
+  </g>
+  <circle cx="46" cy="20" r="9" fill="#ffd45a"/>
+  <path fill="#c8d0e0" d="M10 50 Q4 50 4 42 Q4 34 14 34 Q17 25 26 25 Q37 25 39 34 Q49 34 49 42 Q49 50 42 50 Z"/>
+</svg>
