@@ -539,6 +539,16 @@ html, body {
 .fade-in { animation: fadeIn 350ms ease-out; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+/* ---------- RTL adjustments (Arabic, Urdu) ---------- */
+[dir="rtl"] .loc-block { text-align: right; }
+[dir="rtl"] .date-block { text-align: left; }
+[dir="rtl"] .meta-row { flex-direction: row-reverse; }
+[dir="rtl"] .precip-axis span { text-align: right; padding: 0 2px 0 0; }
+/* The precipitation strip is inherently directional (now -> later);
+   keep its visual order LTR even in RTL languages. */
+[dir="rtl"] .precip-track,
+[dir="rtl"] .precip-axis { direction: ltr; }
+
 /* ---------- Credits ---------- */
 .credits {
   position: absolute;
