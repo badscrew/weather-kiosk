@@ -714,40 +714,24 @@
       const dept = await resolveDepartmentCode();
       if (!dept) { clearAlertChips(); return; }
 
-      const url = `https://webservice.meteofrance.com/v3/warning/full?domain=${encodeURIComponent(dept)}&token=${MF_TOKEN}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("MF Vigilance HTTP " + res.status);
-      const data = await res.json();
+      // Fetch today (J0) and tomorrow (J+1) in parallel.
+      const [j0, j1] = await Promise.all([
+        fetchVigilance(dept, null),
+        fetchVigilance(dept, "J1"),
+      ]);
 
-      // Aggregate per local-day: highest color level + a list of phenomenon reasons.
       const byDay = {};
-      const oneDay = 24 * 60 * 60 * 1000;
-      const today = new Date(); today.setHours(0, 0, 0, 0);
-      const horizon = new Date(today.getTime() + 4 * oneDay); // today + 3 days
-
-      for (const ph of data.timelaps || []) {
-        const phId = String(ph.phenomenon_id);
-        for (const item of ph.timelaps_items || []) {
-          if (!item.color_id || item.color_id < 2) continue; // only yellow+
-          // begin_time/end_time are unix seconds, span across days possible.
-          let cur = new Date(item.begin_time * 1000); cur.setHours(0, 0, 0, 0);
-          const end = new Date(item.end_time * 1000);
-          while (cur < end && cur < horizon) {
-            if (cur >= today) {
-              const key = dayKey(cur);
-              const slot = byDay[key] || (byDay[key] = { color: 0, reasons: new Set() });
-              if (item.color_id > slot.color) slot.color = item.color_id;
-              slot.reasons.add(phId);
-            }
-            cur = new Date(cur.getTime() + oneDay);
-          }
-        }
-      }
+      mergeVigilanceInto(byDay, j0);
+      mergeVigilanceInto(byDay, j1);
 
       // Convert reason sets to arrays for easier rendering.
       alertsByDay = {};
       for (const [k, v] of Object.entries(byDay)) {
-        alertsByDay[k] = { color: v.color, reasonIds: Array.from(v.reasons) };
+        alertsByDay[k] = {
+          color: v.color,
+          topReasonIds: Array.from(v.topReasons),
+          allReasonIds: Array.from(v.allReasons),
+        };
       }
       renderAlertChips();
     } catch (err) {
@@ -756,12 +740,63 @@
     }
   }
 
-  function chipFor(level) {
+  // One Vigilance request. `echeance` is null for today (J0), "J1" for
+  // tomorrow. Returns the parsed JSON or null on failure.
+  async function fetchVigilance(dept, echeance) {
+    const params = new URLSearchParams({ domain: dept, token: MF_TOKEN });
+    if (echeance) params.set("echeance", echeance);
+    const url = `https://webservice.meteofrance.com/v3/warning/full?${params.toString()}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (_) { return null; }
+  }
+
+  // Aggregate Vigilance timelaps_items into per-day buckets in `byDay`.
+  // Tracks the highest color level and which phenomena reach that level
+  // (for the chip text) plus all phenomena that triggered any alert (for
+  // the tooltip).
+  function mergeVigilanceInto(byDay, data) {
+    if (!data || !Array.isArray(data.timelaps)) return;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const horizon = new Date(today.getTime() + 4 * oneDay); // today + 3 days
+
+    for (const ph of data.timelaps) {
+      const phId = String(ph.phenomenon_id);
+      for (const item of ph.timelaps_items || []) {
+        if (!item.color_id || item.color_id < 2) continue; // only yellow+
+        let cur = new Date(item.begin_time * 1000); cur.setHours(0, 0, 0, 0);
+        const end = new Date(item.end_time * 1000);
+        while (cur < end && cur < horizon) {
+          if (cur >= today) {
+            const key = dayKey(cur);
+            const slot = byDay[key] || (byDay[key] = {
+              color: 0,
+              allReasons: new Set(),
+              topReasons: new Set(),
+            });
+            slot.allReasons.add(phId);
+            if (item.color_id > slot.color) {
+              slot.color = item.color_id;
+              slot.topReasons = new Set([phId]);
+            } else if (item.color_id === slot.color) {
+              slot.topReasons.add(phId);
+            }
+          }
+          cur = new Date(cur.getTime() + oneDay);
+        }
+      }
+    }
+  }
+
+  function chipFor(level, label) {
     const cls = ALERT_LEVELS[level];
     if (!cls) return null;
     const el = document.createElement("div");
     el.className = `alert-chip alert-${cls}`;
-    el.textContent = window.I18N ? window.I18N.t("alert" + cls.charAt(0).toUpperCase() + cls.slice(1)) : cls;
+    el.textContent = label || (window.I18N ? window.I18N.t("alert" + cls.charAt(0).toUpperCase() + cls.slice(1)) : cls);
     return el;
   }
 
@@ -773,6 +808,12 @@
       .join(", ");
   }
 
+  function chipLabel(reasonIds, fallbackLevelKey) {
+    const text = reasonText(reasonIds);
+    if (text) return text;
+    return window.I18N ? window.I18N.t(fallbackLevelKey) : fallbackLevelKey;
+  }
+
   function renderAlertChips() {
     // Today's chip
     const todayKey = dayKey(new Date());
@@ -781,9 +822,10 @@
       const a = alertsByDay[todayKey];
       if (a && a.color >= 2) {
         const cls = ALERT_LEVELS[a.color];
+        const fallbackKey = "alert" + cls.charAt(0).toUpperCase() + cls.slice(1);
         todayChip.className = `alert-chip alert-${cls}`;
-        todayChip.textContent = window.I18N ? window.I18N.t("alert" + cls.charAt(0).toUpperCase() + cls.slice(1)) : cls;
-        todayChip.title = reasonText(a.reasonIds);
+        todayChip.textContent = chipLabel(a.topReasonIds, fallbackKey);
+        todayChip.title = reasonText(a.allReasonIds);
         todayChip.hidden = false;
       } else {
         todayChip.hidden = true;
@@ -801,9 +843,11 @@
       if (!key) return;
       const a = alertsByDay[key];
       if (!a || a.color < 2) return;
-      const chip = chipFor(a.color);
+      const cls = ALERT_LEVELS[a.color];
+      const fallbackKey = "alert" + cls.charAt(0).toUpperCase() + cls.slice(1);
+      const chip = chipFor(a.color, chipLabel(a.topReasonIds, fallbackKey));
       if (chip) {
-        chip.title = reasonText(a.reasonIds);
+        chip.title = reasonText(a.allReasonIds);
         card.appendChild(chip);
       }
     });
