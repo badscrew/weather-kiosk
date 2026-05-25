@@ -40,6 +40,12 @@ html, body {
   transform-origin: center center;
 }
 
+/* When 15-minute precipitation data isn't really 15-minutely (the source
+   model only provides hourly), hide the strip and let the main content
+   area reclaim its vertical space. */
+#app.no-precip { grid-template-rows: 72px 1fr 0; }
+#app.no-precip .precip-strip { display: none; }
+
 /* ---------- Top bar ---------- */
 .topbar {
   display: grid;

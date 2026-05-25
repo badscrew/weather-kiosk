@@ -43,26 +43,26 @@
     48: { day: ICON("fog"),               night: ICON("fog") },
     51: { day: ICON("drizzle"),           night: ICON("drizzle") },
     53: { day: ICON("drizzle"),           night: ICON("drizzle") },
-    55: { day: ICON("rain"),              night: ICON("rain") },
-    56: { day: ICON("drizzle"),           night: ICON("drizzle") },
-    57: { day: ICON("drizzle"),           night: ICON("drizzle") },
-    61: { day: ICON("rain"),              night: ICON("rain") },
+    55: { day: ICON("rain-light"),        night: ICON("rain-light") },
+    56: { day: ICON("freezing-rain"),     night: ICON("freezing-rain") },
+    57: { day: ICON("freezing-rain"),     night: ICON("freezing-rain") },
+    61: { day: ICON("rain-light"),        night: ICON("rain-light") },
     63: { day: ICON("rain"),              night: ICON("rain") },
-    65: { day: ICON("rain"),              night: ICON("rain") },
-    66: { day: ICON("rain"),              night: ICON("rain") },
-    67: { day: ICON("rain"),              night: ICON("rain") },
-    71: { day: ICON("snow"),              night: ICON("snow") },
+    65: { day: ICON("rain-heavy"),        night: ICON("rain-heavy") },
+    66: { day: ICON("freezing-rain"),     night: ICON("freezing-rain") },
+    67: { day: ICON("freezing-rain"),     night: ICON("freezing-rain") },
+    71: { day: ICON("snow-light"),        night: ICON("snow-light") },
     73: { day: ICON("snow"),              night: ICON("snow") },
-    75: { day: ICON("snow"),              night: ICON("snow") },
-    77: { day: ICON("snow"),              night: ICON("snow") },
-    80: { day: ICON("rain"),              night: ICON("rain") },
+    75: { day: ICON("snow-heavy"),        night: ICON("snow-heavy") },
+    77: { day: ICON("snow-light"),        night: ICON("snow-light") },
+    80: { day: ICON("rain-light"),        night: ICON("rain-light") },
     81: { day: ICON("rain"),              night: ICON("rain") },
-    82: { day: ICON("rain"),              night: ICON("rain") },
-    85: { day: ICON("snow"),              night: ICON("snow") },
-    86: { day: ICON("snow"),              night: ICON("snow") },
+    82: { day: ICON("rain-heavy"),        night: ICON("rain-heavy") },
+    85: { day: ICON("snow-light"),        night: ICON("snow-light") },
+    86: { day: ICON("snow-heavy"),        night: ICON("snow-heavy") },
     95: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
-    96: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
-    99: { day: ICON("thunderstorm"),      night: ICON("thunderstorm") },
+    96: { day: ICON("thunderstorm-hail"), night: ICON("thunderstorm-hail") },
+    99: { day: ICON("thunderstorm-hail"), night: ICON("thunderstorm-hail") },
   };
   const FALLBACK_ICON = ICON("unknown");
 
@@ -304,7 +304,55 @@
     return -1;
   }
 
-  function renderPrecipStrip(data) {
+  // ---- Native 15-min coverage detection -------------------------------
+  // Open-Meteo serves minutely_15 globally, but only North America (HRRR)
+  // and parts of Western/Central Europe (AROME, ICON-D2) have native 15-min
+  // models. Elsewhere the data is interpolated from hourly, which is
+  // misleading on the precip strip. We probe each native model with a tiny
+  // request and only show the strip when at least one returns data.
+  const NATIVE_15M_MODELS = ["gfs_hrrr", "meteofrance_arome_france", "icon_d2"];
+
+  // Cache the result per ~5km grid cell to avoid re-probing on every fetch.
+  const minute15CoverageCache = new Map();
+
+  function coverageKey() {
+    const lat = Number(CFG.latitude).toFixed(2);
+    const lon = Number(CFG.longitude).toFixed(2);
+    return `${lat},${lon}`;
+  }
+
+  async function detectMinutely15Coverage() {
+    const key = coverageKey();
+    if (minute15CoverageCache.has(key)) return minute15CoverageCache.get(key);
+
+    const probes = NATIVE_15M_MODELS.map(async (model) => {
+      const params = new URLSearchParams({
+        latitude: String(CFG.latitude),
+        longitude: String(CFG.longitude),
+        minutely_15: "precipitation_probability",
+        forecast_days: "1",
+        models: model,
+      });
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+        if (!res.ok) return false;
+        const data = await res.json();
+        return !data.error && Array.isArray(data?.minutely_15?.time);
+      } catch (_) { return false; }
+    });
+
+    const results = await Promise.all(probes);
+    const covered = results.some(Boolean);
+    minute15CoverageCache.set(key, covered);
+    return covered;
+  }
+
+  // Render (or hide) the 15-minute precipitation strip. It's only useful
+  // when Open-Meteo can serve native 15-min data here, otherwise the
+  // values are linearly interpolated from hourly and the bar pattern is
+  // misleading. We probe the candidate native models once per location.
+  async function renderPrecipStrip(data) {
+    const app = document.getElementById("app");
     const track = $("precip-track");
     const axis = $("precip-axis");
     if (!track || !axis) return;
@@ -312,18 +360,13 @@
     axis.innerHTML = "";
 
     const m = data.minutely_15;
-    if (!m || !Array.isArray(m.time) || !Array.isArray(m.precipitation_probability)) {
-      // No data; render neutral empty blocks.
-      for (let i = 0; i < 16; i++) {
-        const block = document.createElement("div");
-        block.className = "precip-block";
-        track.appendChild(block);
-        const lbl = document.createElement("span");
-        lbl.className = "empty";
-        axis.appendChild(lbl);
-      }
-      return;
-    }
+    const haveData = m && Array.isArray(m.time) && Array.isArray(m.precipitation_probability);
+    const covered = haveData && await detectMinutely15Coverage();
+
+    // Hide the whole strip when data isn't natively 15-minutely; the
+    // main content area reclaims its vertical space.
+    if (app) app.classList.toggle("no-precip", !covered);
+    if (!covered) return;
 
     const start = firstUpcomingIndex(m.time, Date.now());
     if (start < 0) return;
@@ -577,6 +620,9 @@
     CFG.locationName = r.name;
     CFG.countryCode = r.country_code || "";
     CFG.locationTz = r.timezone || "";
+    // The 15-min coverage decision depends on coordinates; let the next
+    // fetch redo the probe.
+    minute15CoverageCache.clear();
     try {
       localStorage.setItem(LOC_KEY, JSON.stringify({
         latitude: r.latitude,
