@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=800, height=480, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <title data-i18n="appTitle">Weather Kiosk</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main id="app">
+  <main id="stage">
+    <div id="app">
     <!-- Header -->
     <header class="topbar">
       <button class="loc-block" id="location-btn" type="button" aria-haspopup="dialog" aria-controls="loc-dialog">
@@ -84,6 +85,7 @@
       <span id="status" data-i18n="loading">Loading…</span>
       <span id="updated"></span>
     </footer>
+    </div>
   </main>
 
   <script src="config.js"></script>

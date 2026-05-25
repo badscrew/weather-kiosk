@@ -838,12 +838,36 @@
   // localized labels (day names, condition text) without refetching.
   let lastWeatherData = null;
 
+  // ---- Zoom-to-fit -----------------------------------------------------
+  // The UI is designed at 800x480. To support arbitrary landscape screens
+  // we scale the whole #app via a CSS transform. We pick the largest scale
+  // that keeps both axes inside the viewport (letterboxing if aspect ratios
+  // differ). Portrait orientation is intentionally not optimized.
+  const DESIGN_W = 800;
+  const DESIGN_H = 480;
+
+  function setupScale() {
+    const stage = document.getElementById("stage");
+    if (!stage) return;
+    const apply = () => {
+      const w = window.innerWidth || document.documentElement.clientWidth;
+      const h = window.innerHeight || document.documentElement.clientHeight;
+      if (!w || !h) return;
+      const s = Math.min(w / DESIGN_W, h / DESIGN_H);
+      stage.style.setProperty("--stage-scale", String(s));
+    };
+    apply();
+    window.addEventListener("resize", apply);
+    window.addEventListener("orientationchange", apply);
+  }
+
   function init() {
     if (CFG.latitude == null || CFG.longitude == null) {
       setStatus(window.I18N ? window.I18N.t("hintConfigure") : "Set latitude/longitude in config.js", true);
       return;
     }
 
+    setupScale();
     // Apply translations to all elements with data-i18n attributes.
     if (window.I18N) {
       window.I18N.applyToDOM();

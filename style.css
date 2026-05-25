@@ -1,11 +1,13 @@
 /* Weather Kiosk styles
-   Target screen: 800 x 480 (5" Raspberry Pi touch display) */
+   Design canvas: 800 x 480 (5" Raspberry Pi touch display).
+   The canvas is scaled at runtime to fit any landscape viewport via a
+   CSS transform on #app. JS sets --stage-scale on #stage. */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  width: 800px;
-  height: 480px;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color: #f4f6fb;
@@ -16,12 +18,27 @@ html, body {
   cursor: none; /* hide cursor on touch kiosk */
 }
 
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0a0f1c; /* letterbox color when aspect ratios differ */
+  --stage-scale: 1;
+}
+
 #app {
+  /* Fixed design canvas; scaled by JS to fit the viewport */
   width: 800px;
   height: 480px;
+  flex: 0 0 auto;
   display: grid;
   grid-template-rows: 72px 1fr 64px 24px;
   background: linear-gradient(160deg, #0e1a33 0%, #0b1220 60%, #0a0f1c 100%);
+  transform: scale(var(--stage-scale));
+  transform-origin: center center;
 }
 
 /* ---------- Top bar ---------- */
