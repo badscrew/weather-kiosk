@@ -452,6 +452,7 @@
     document.body.style.cursor = "auto"; // restore cursor while interacting
     populateCountrySelect();
     syncLanguageSelect();
+    syncCountrySelect();
     $("loc-city").value = "";
     $("loc-results").innerHTML = "";
     setHint(window.I18N ? window.I18N.t("hintPick") : "Pick a country, then search for a city.", false);
@@ -498,6 +499,18 @@
     const sel = $("loc-language");
     if (!sel || !window.I18N) return;
     sel.value = window.I18N.getLang();
+  }
+
+  // Preselect the country dropdown to match the currently active location.
+  // Falls back to the empty "Any country" option if the country isn't in
+  // our visible list.
+  function syncCountrySelect() {
+    const sel = $("loc-country");
+    if (!sel) return;
+    const target = (CFG.countryCode || "").toUpperCase();
+    if (!target) { sel.value = ""; return; }
+    const has = Array.from(sel.options).some((o) => o.value === target);
+    sel.value = has ? target : "";
   }
 
   async function searchCities() {
