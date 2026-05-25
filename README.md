@@ -4,6 +4,8 @@ A lightweight HTML/CSS/JS kiosk page for a Raspberry Pi with a 5" 800×480 touch
 
 No build step, no backend, no API key. Just static files served by anything (or opened from `file://`).
 
+**Live demo:** [badscrew.github.io/weather-kiosk](https://badscrew.github.io/weather-kiosk/)
+
 ## Features
 
 - Today panel and three forecast cards (today + 3 next days) with icon, conditions, high/low, precipitation chance
@@ -91,6 +93,29 @@ The layout is designed in landscape. The simplest setup is to rotate the panel a
 - `app.js` — data fetch, formatting, render loop, alerts, dialog logic, scale-to-fit
 - `i18n.js` — translations (en/fr/es/de) for UI strings, WMO codes, Vigilance phenomena
 - `config.js` — user configuration
+- `icons/` — self-hosted SVG weather icons
+
+## Hosting on GitHub Pages
+
+Because everything is static, GitHub Pages serves the project as-is.
+
+1. In the repo, go to **Settings → Pages**.
+2. Set **Source** to "Deploy from a branch".
+3. Pick **Branch** = `main`, **Folder** = `/ (root)`. Save.
+
+Every push to `main` republishes the site within a minute or two. The URL is `https://<user>.github.io/<repo>/`. Geolocation works because Pages serves over HTTPS.
+
+`config.js` ships with neutral defaults (Royal Observatory, Greenwich); the picker dialog overrides them at runtime and persists the choice in `localStorage`, so each visitor's selection is independent.
+
+## Acknowledgements
+
+- [Open-Meteo](https://open-meteo.com/) — free weather forecast API used for the current conditions, daily forecast, and 15-minute precipitation strip
+- [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) — country/city search powering the picker dialog
+- [BigDataCloud](https://www.bigdatacloud.com/) — keyless reverse-geocoding client API used to resolve coordinates to a city name
+- [geo.api.gouv.fr](https://geo.api.gouv.fr/) — French government geocoding API used to map coordinates to a département for the Vigilance lookup
+- [Météo-France Vigilance](https://vigilance.meteofrance.fr/) — official French weather alerts, used for J0 and J+1 chips
+
+Weather icons in the `icons/` folder are hand-drawn SVGs released under the same license as the rest of this repo. Emoji are intentionally avoided so the kiosk renders identically across operating systems.
 
 ## Customization tips
 

@@ -524,3 +524,25 @@ html, body {
 .error { color: #ff8b8b; }
 .fade-in { animation: fadeIn 350ms ease-out; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Credits ---------- */
+.credits {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  z-index: 5;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  pointer-events: auto;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.credits a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+}
+.credits a:hover { color: rgba(255, 255, 255, 0.95); }
+/* Hide credits when an error banner shows up; the banner sits opposite
+   corner but on small viewports they could collide. */
+.statusbar.error-visible ~ .credits { display: none; }
