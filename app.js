@@ -372,6 +372,12 @@
     const el = $("status");
     el.textContent = msg;
     el.classList.toggle("error", !!isError);
+
+    // The status bar is hidden by default to save vertical space. We only
+    // surface it as a small floating banner when there's a real error to
+    // show. "OK" / "Updating…" never become visible.
+    const bar = el.parentElement;
+    if (bar) bar.classList.toggle("error-visible", !!isError);
   }
 
   function setUpdated() {
