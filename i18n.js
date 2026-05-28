@@ -64,6 +64,8 @@ window.I18N = (function () {
       alertYellow: "yellow",
       alertOrange: "orange",
       alertRed: "red",
+      // Fullscreen button
+      fullscreenAria: "Toggle fullscreen",
     },
     fr: {
       appTitle: "Kiosque Météo",

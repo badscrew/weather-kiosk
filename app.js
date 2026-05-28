@@ -978,8 +978,11 @@
     const stage = document.getElementById("stage");
     if (!stage) return;
     const apply = () => {
-      const w = window.innerWidth || document.documentElement.clientWidth;
-      const h = window.innerHeight || document.documentElement.clientHeight;
+      // Use the stage's content box rather than window.innerWidth so the
+      // safe-area padding (iPhone notch, Android gesture bar) is honored
+      // when running as an installed PWA in standalone mode.
+      const w = stage.clientWidth || window.innerWidth || document.documentElement.clientWidth;
+      const h = stage.clientHeight || window.innerHeight || document.documentElement.clientHeight;
       if (!w || !h) return;
       const s = Math.min(w / DESIGN_W, h / DESIGN_H);
       stage.style.setProperty("--stage-scale", String(s));
@@ -989,7 +992,78 @@
     window.addEventListener("orientationchange", apply);
   }
 
+  // ---- Fullscreen toggle ----------------------------------------------
+  // The standard Fullscreen API works on desktop (Chrome, Firefox, Edge,
+  // Safari) and Android browsers. iPhone Safari does not implement it,
+  // so we feature-detect and only show the toggle button where it
+  // actually works. iPhone users get the same chrome-free experience by
+  // installing the PWA (Add to Home Screen), which honors
+  // `display: fullscreen` from the manifest.
+  function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function fullscreenSupported() {
+    const el = document.documentElement;
+    return !!(el.requestFullscreen || el.webkitRequestFullscreen);
+  }
+
+  async function enterFullscreen() {
+    const el = document.documentElement;
+    try {
+      if (el.requestFullscreen) await el.requestFullscreen({ navigationUI: "hide" });
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } catch (_) { /* user gesture missing or denied */ }
+  }
+
+  async function exitFullscreen() {
+    try {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+    } catch (_) {}
+  }
+
+  function setupFullscreen() {
+    const btn = document.getElementById("fullscreen-btn");
+    if (!btn) return;
+
+    // No point showing the button when the API isn't available at all
+    // (iPhone Safari). Browser-managed fullscreen still works inside an
+    // installed PWA window on desktop, so we don't hide the button there.
+    if (!fullscreenSupported()) {
+      btn.hidden = true;
+      return;
+    }
+    btn.hidden = false;
+
+    const sync = () => btn.classList.toggle("is-fullscreen", !!fullscreenElement());
+    sync();
+
+    btn.addEventListener("click", () => {
+      if (fullscreenElement()) exitFullscreen();
+      else enterFullscreen();
+    });
+
+    document.addEventListener("fullscreenchange", sync);
+    document.addEventListener("webkitfullscreenchange", sync);
+
+    // Keyboard shortcut: F toggles, Esc is handled natively by the browser.
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "f" && e.key !== "F") return;
+      // Don't hijack typing in the location dialog inputs.
+      const tag = (e.target && e.target.tagName) || "";
+      if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+      e.preventDefault();
+      if (fullscreenElement()) exitFullscreen();
+      else enterFullscreen();
+    });
+  }
+
   function init() {
+    // Wire up the fullscreen toggle first so it works even before a
+    // location is configured (the button has nothing to do with config).
+    setupFullscreen();
+
     if (CFG.latitude == null || CFG.longitude == null) {
       setStatus(window.I18N ? window.I18N.t("hintConfigure") : "Set latitude/longitude in config.js", true);
       return;

@@ -2,8 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title data-i18n="appTitle">Weather Kiosk</title>
+
+  <!-- PWA manifest. When installed (Add to Home Screen on iOS, Install
+       on Android/desktop), the app launches without browser chrome. This
+       is the only way to get a true full-screen experience on iPhone
+       Safari, which does not implement the Fullscreen API. -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- iOS standalone mode hints. Required so an Add-to-Home-Screen icon
+       launches without the Safari address bar / tab strip. -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Weather" />
+  <link rel="apple-touch-icon" href="icons/sun.svg" />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -98,6 +114,17 @@
     </div>
     </div>
   </main>
+
+  <!-- Fullscreen toggle. Hidden by default; JS reveals it only on devices
+       where the Fullscreen API actually works (Android, desktop). On
+       iPhone Safari it stays hidden because the API is not implemented;
+       users get full screen by installing the PWA instead. -->
+  <button class="fullscreen-btn" id="fullscreen-btn" type="button" hidden
+    data-i18n-attr="aria-label" data-i18n-attr-key="fullscreenAria"
+    aria-label="Toggle fullscreen">
+    <img class="fs-icon-enter" src="icons/fullscreen-enter.svg" alt="" />
+    <img class="fs-icon-exit" src="icons/fullscreen-exit.svg" alt="" />
+  </button>
 
   <script src="config.js"></script>
   <script src="i18n.js"></script>
