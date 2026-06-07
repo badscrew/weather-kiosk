@@ -50,10 +50,12 @@
         <div class="today-temp">
           <span class="temp-value" id="today-temp">--</span><span class="temp-unit">°</span>
         </div>
-        <div class="today-cond" id="today-cond">--</div>
-        <div class="today-hilo">
-          <span><span data-i18n="hiAbbr">H</span> <b id="today-high">--</b>°</span>
-          <span><span data-i18n="loAbbr">L</span> <b id="today-low">--</b>°</span>
+        <div class="today-condline">
+          <div class="today-cond" id="today-cond">--</div>
+          <div class="today-hilo">
+            <span><span data-i18n="hiAbbr">H</span> <b id="today-high">--</b>°</span>
+            <span><span data-i18n="loAbbr">L</span> <b id="today-low">--</b>°</span>
+          </div>
         </div>
         <div class="today-meta">
           <div class="meta-row">
@@ -61,23 +63,38 @@
             <span class="meta-value" id="today-feels">--°</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label" data-i18n="wind">Wind</span>
+            <span class="meta-label">
+              <img class="meta-icon" src="icons/wind.svg" alt="Wind"
+                data-i18n-attr="alt" data-i18n-attr-key="wind" />
+            </span>
             <span class="meta-value" id="today-wind">--</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label" data-i18n="humidity">Humidity</span>
+            <span class="meta-label">
+              <img class="meta-icon" src="icons/droplet.svg" alt="Humidity"
+                data-i18n-attr="alt" data-i18n-attr-key="humidity" />
+            </span>
             <span class="meta-value" id="today-humidity">--%</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label" data-i18n="rain">Rain</span>
+            <span class="meta-label">
+              <img class="meta-icon" src="icons/umbrella.svg" alt="Rain"
+                data-i18n-attr="alt" data-i18n-attr-key="rain" />
+            </span>
             <span class="meta-value" id="today-precip">--%</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label" data-i18n="sunrise">Sunrise</span>
+            <span class="meta-label">
+              <img class="meta-icon" src="icons/sunrise.svg" alt="Sunrise"
+                data-i18n-attr="alt" data-i18n-attr-key="sunrise" />
+            </span>
             <span class="meta-value" id="today-sunrise">--:--</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label" data-i18n="sunset">Sunset</span>
+            <span class="meta-label">
+              <img class="meta-icon" src="icons/sunset.svg" alt="Sunset"
+                data-i18n-attr="alt" data-i18n-attr-key="sunset" />
+            </span>
             <span class="meta-value" id="today-sunset">--:--</span>
           </div>
         </div>
@@ -93,7 +110,10 @@
 
     <!-- 15-minute precipitation strip (next 4 hours) -->
     <div class="precip-strip" id="precip-strip" data-i18n-attr="aria-label" data-i18n-attr-key="precipAria" aria-label="Precipitation probability for the next 4 hours">
-      <div class="precip-title" data-i18n="precipTitle">Precipitation probability · next 4 h</div>
+      <div class="precip-title">
+        <img class="precip-title-icon" src="icons/umbrella.svg" alt="" />
+        <span data-i18n="precipTitleShort">next 4 h</span>
+      </div>
       <div class="precip-track" id="precip-track"></div>
       <div class="precip-axis" id="precip-axis"></div>
     </div>

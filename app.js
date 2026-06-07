@@ -268,7 +268,7 @@
           <span class="fc-high">${fmtInt(d.temperature_2m_max[i])}°</span>
           <span class="fc-low">${fmtInt(d.temperature_2m_min[i])}°</span>
         </div>
-        <div class="fc-precip"><img class="fc-precip-icon" src="icons/droplet.svg" alt=""/>${fmtInt(d.precipitation_probability_max[i])}%</div>
+        <div class="fc-precip"><img class="fc-precip-icon" src="icons/umbrella.svg" alt=""/>${fmtInt(d.precipitation_probability_max[i])}%</div>
       `;
       card.querySelector(".fc-icon").appendChild(iconImg(w.icon, w.label));
       root.appendChild(card);
