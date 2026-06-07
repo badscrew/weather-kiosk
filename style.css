@@ -335,9 +335,16 @@ html, body {
   align-content: start;
   font-size: 16px;
 }
-.meta-row { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dashed rgba(255,255,255,0.07); }
-.meta-label { opacity: 0.65; }
-.meta-value { font-weight: 600; font-variant-numeric: tabular-nums; }
+.meta-row {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.07);
+}
+.meta-label { opacity: 0.65; text-align: right; white-space: nowrap; }
+.meta-value { font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; }
 
 /* ---------- 3-day forecast ---------- */
 .forecast {
@@ -345,7 +352,25 @@ html, body {
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   min-height: 0;
+  cursor: pointer;
 }
+
+/* Week view: six cards in a 3 x 2 grid filling the same space. Slightly
+   more compact than the 3-day cards so two rows fit the 800x480 canvas. */
+.forecast.week {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.forecast.week .fc-card { padding: 12px 8px 10px; border-radius: 12px; }
+.forecast.week .fc-day { font-size: 18px; }
+.forecast.week .fc-icon { margin: 2px 0; }
+.forecast.week .fc-icon img { width: 48px; height: 48px; }
+.forecast.week .fc-cond { display: none; }
+.forecast.week .fc-high { font-size: 22px; }
+.forecast.week .fc-low { font-size: 15px; }
+.forecast.week .fc-precip { font-size: 14px; }
+.forecast.week .fc-precip-icon { width: 14px; height: 14px; }
 
 .fc-card {
   display: flex;
@@ -546,7 +571,8 @@ html, body {
 /* ---------- RTL adjustments (Arabic, Urdu) ---------- */
 [dir="rtl"] .loc-block { text-align: right; }
 [dir="rtl"] .date-block { text-align: left; }
-[dir="rtl"] .meta-row { flex-direction: row-reverse; }
+[dir="rtl"] .meta-label { text-align: left; }
+[dir="rtl"] .meta-value { text-align: right; }
 [dir="rtl"] .precip-axis span { text-align: right; padding: 0 2px 0 0; }
 /* The precipitation strip is inherently directional (now -> later);
    keep its visual order LTR even in RTL languages. */
