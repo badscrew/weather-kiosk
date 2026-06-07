@@ -66,6 +66,8 @@ window.I18N = (function () {
       alertRed: "red",
       // Fullscreen button
       fullscreenAria: "Toggle fullscreen",
+      // Forecast view toggle
+      forecastToggleAria: "Tap to switch between 3-day and weekly forecast",
     },
     fr: {
       appTitle: "Kiosque Météo",
@@ -113,6 +115,7 @@ window.I18N = (function () {
       alertYellow: "jaune",
       alertOrange: "orange",
       alertRed: "rouge",
+      forecastToggleAria: "Touchez pour basculer entre les prévisions à 3 jours et hebdomadaires",
     },
     es: {
       appTitle: "Quiosco del Tiempo",
@@ -160,6 +163,7 @@ window.I18N = (function () {
       alertYellow: "amarilla",
       alertOrange: "naranja",
       alertRed: "roja",
+      forecastToggleAria: "Toca para cambiar entre la previsión de 3 días y semanal",
     },
     de: {
       appTitle: "Wetter-Kiosk",
@@ -207,6 +211,7 @@ window.I18N = (function () {
       alertYellow: "gelb",
       alertOrange: "orange",
       alertRed: "rot",
+      forecastToggleAria: "Tippen, um zwischen 3-Tage- und Wochenvorhersage zu wechseln",
     },
     zh: {
       appTitle: "天气信息屏",
@@ -254,6 +259,7 @@ window.I18N = (function () {
       alertYellow: "黄色",
       alertOrange: "橙色",
       alertRed: "红色",
+      forecastToggleAria: "点按可在 3 天与一周预报之间切换",
     },
     hi: {
       appTitle: "मौसम कियोस्क",
@@ -301,6 +307,7 @@ window.I18N = (function () {
       alertYellow: "पीला",
       alertOrange: "नारंगी",
       alertRed: "लाल",
+      forecastToggleAria: "3-दिन और साप्ताहिक पूर्वानुमान के बीच स्विच करने के लिए टैप करें",
     },
     ar: {
       appTitle: "كشك الطقس",
@@ -348,6 +355,7 @@ window.I18N = (function () {
       alertYellow: "أصفر",
       alertOrange: "برتقالي",
       alertRed: "أحمر",
+      forecastToggleAria: "اضغط للتبديل بين توقعات 3 أيام والتوقعات الأسبوعية",
     },
     bn: {
       appTitle: "আবহাওয়া কিয়স্ক",
@@ -395,6 +403,7 @@ window.I18N = (function () {
       alertYellow: "হলুদ",
       alertOrange: "কমলা",
       alertRed: "লাল",
+      forecastToggleAria: "৩-দিন ও সাপ্তাহিক পূর্বাভাসের মধ্যে পরিবর্তন করতে আলতো চাপুন",
     },
     pt: {
       appTitle: "Quiosque do Tempo",
@@ -442,6 +451,7 @@ window.I18N = (function () {
       alertYellow: "amarelo",
       alertOrange: "laranja",
       alertRed: "vermelho",
+      forecastToggleAria: "Toque para alternar entre a previsão de 3 dias e semanal",
     },
     ru: {
       appTitle: "Погодный киоск",
@@ -489,6 +499,7 @@ window.I18N = (function () {
       alertYellow: "жёлтый",
       alertOrange: "оранжевый",
       alertRed: "красный",
+      forecastToggleAria: "Нажмите, чтобы переключаться между прогнозом на 3 дня и неделю",
     },
     it: {
       appTitle: "Chiosco Meteo",
@@ -536,6 +547,7 @@ window.I18N = (function () {
       alertYellow: "giallo",
       alertOrange: "arancione",
       alertRed: "rosso",
+      forecastToggleAria: "Tocca per passare tra previsioni a 3 giorni e settimanali",
     },
     ur: {
       appTitle: "موسم کیوسک",
@@ -583,6 +595,7 @@ window.I18N = (function () {
       alertYellow: "زرد",
       alertOrange: "نارنجی",
       alertRed: "سرخ",
+      forecastToggleAria: "3 دن اور ہفتہ وار پیش گوئی کے درمیان سوئچ کرنے کے لیے دبائیں",
     },
     id: {
       appTitle: "Kios Cuaca",
@@ -630,6 +643,7 @@ window.I18N = (function () {
       alertYellow: "kuning",
       alertOrange: "jingga",
       alertRed: "merah",
+      forecastToggleAria: "Ketuk untuk beralih antara prakiraan 3 hari dan mingguan",
     },
     ja: {
       appTitle: "天気キオスク",
@@ -677,6 +691,7 @@ window.I18N = (function () {
       alertYellow: "黄",
       alertOrange: "橙",
       alertRed: "赤",
+      forecastToggleAria: "タップして3日間と週間予報を切り替え",
     },
   };
 

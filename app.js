@@ -12,6 +12,16 @@
   // Storage key for user-selected location overrides.
   const LOC_KEY = "kiosk.location";
 
+  // Forecast view: 3-day (default) or 7-day week. Toggled by tapping the
+  // forecast area; the choice is persisted across reloads.
+  const FC_VIEW_KEY = "kiosk.fcview";
+  const FC_VIEWS = { THREE: "3day", WEEK: "week" };
+  let forecastView = FC_VIEWS.THREE;
+  try {
+    const v = localStorage.getItem(FC_VIEW_KEY);
+    if (v === FC_VIEWS.WEEK || v === FC_VIEWS.THREE) forecastView = v;
+  } catch (_) { /* ignore */ }
+
   // Apply any saved location override on top of CFG before anything reads it.
   function loadSavedLocation() {
     try {
@@ -123,7 +133,7 @@
       temperature_unit: tempUnit,
       wind_speed_unit: windUnit,
       precipitation_unit: precipUnit,
-      forecast_days: "4",
+      forecast_days: "7",
     });
     return `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
   }
@@ -237,8 +247,14 @@
     const root = $("forecast");
     root.innerHTML = "";
 
-    // Show next 3 days (skip today, index 0)
-    for (let i = 1; i <= 3; i++) {
+    // 3-day view shows the next 3 days; week view shows the next 6
+    // arranged as two rows of three.
+    const isWeek = forecastView === FC_VIEWS.WEEK;
+    root.classList.toggle("week", isWeek);
+    const count = isWeek ? 6 : 3;
+
+    // Show next N days (skip today, index 0)
+    for (let i = 1; i <= count; i++) {
       if (!d.time || d.time[i] == null) continue;
       const w = describe(d.weather_code[i], true);
       const card = document.createElement("div");
@@ -259,6 +275,29 @@
     }
     // Alerts may already be loaded; reapply chips to the freshly built cards.
     renderAlertChips();
+  }
+
+  // Toggle between the 3-day and 7-day forecast views and persist the
+  // choice. Re-renders from the cached payload, so no refetch is needed.
+  function setForecastView(view) {
+    forecastView = view === FC_VIEWS.WEEK ? FC_VIEWS.WEEK : FC_VIEWS.THREE;
+    try { localStorage.setItem(FC_VIEW_KEY, forecastView); } catch (_) {}
+    if (lastWeatherData) renderForecast(lastWeatherData);
+  }
+
+  function toggleForecastView() {
+    setForecastView(forecastView === FC_VIEWS.WEEK ? FC_VIEWS.THREE : FC_VIEWS.WEEK);
+  }
+
+  // Tapping/clicking anywhere in the forecast strip switches the view.
+  // Keyboard users can do the same via Enter/Space.
+  function wireForecastToggle() {
+    const root = $("forecast");
+    if (!root) return;
+    root.addEventListener("click", toggleForecastView);
+    root.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleForecastView(); }
+    });
   }
 
   // ---- Precipitation strip --------------------------------------------
@@ -1098,6 +1137,7 @@
     if (CFG.locationName) $("location").textContent = CFG.locationName;
     resolveLocationName();
     wireLocationDialog();
+    wireForecastToggle();
 
     fetchWeather();
     fetchAlerts();
