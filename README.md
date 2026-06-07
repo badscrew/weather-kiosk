@@ -125,3 +125,23 @@ Weather icons in the `icons/` folder are hand-drawn SVGs released under the same
 - Change the design canvas size by editing `DESIGN_W` / `DESIGN_H` in `app.js` and the matching `width` / `height` on `#app` in `style.css`. The runtime scaler picks up the new dimensions automatically.
 - Add a fifth day by changing the loop bound in `renderForecast` and bumping `forecast_days` in `buildUrl` (the 3-card row would need a CSS tweak to fit a fourth).
 - Add a new language: extend `UI`, `WMO_LABELS`, and `ALERT_LABELS` in `i18n.js`, then add the `<option>` to the language select in `index.html`.
+
+## License
+
+Copyright (C) 2026 badscrew
+
+Weather Kiosk is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program. See the [`LICENSE`](LICENSE) file or
+<https://www.gnu.org/licenses/>.
+
+The hand-drawn SVG icons in `icons/` are released under the same GPL-3.0 license
+as the rest of this repository.
