@@ -377,6 +377,19 @@ html, body {
   display: block;
 }
 
+.td-wind {
+  font-size: 12px;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.td-wind-icon {
+  width: 12px;
+  height: 12px;
+  display: block;
+}
+
 .today-icon {
   grid-column: 1 / 2;
   grid-row: 1 / 3;

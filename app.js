@@ -118,7 +118,7 @@
         "is_day",
       ].join(","),
       minutely_15: "precipitation_probability",
-      hourly: ["weather_code", "temperature_2m", "precipitation_probability"].join(","),
+      hourly: ["weather_code", "temperature_2m", "precipitation_probability", "wind_speed_10m"].join(","),
       daily: [
         "weather_code",
         "temperature_2m_max",
@@ -480,6 +480,7 @@
         code: hourly.weather_code[idx],
         temp: hourly.temperature_2m[idx],
         precip: hourly.precipitation_probability ? hourly.precipitation_probability[idx] : null,
+        wind: hourly.wind_speed_10m ? hourly.wind_speed_10m[idx] : null,
       };
     }).filter(Boolean);
 
@@ -520,6 +521,7 @@
         <div class="td-hour">${slot.display}</div>
         <div class="td-icon"></div>
         <div class="td-temp">${fmtInt(slot.temp)}°</div>
+        <div class="td-wind"><img class="td-wind-icon" src="icons/wind.svg" alt=""/>${slot.wind != null ? fmtInt(slot.wind) : "--"}</div>
         <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</div>
       `;
       card.querySelector(".td-icon").appendChild(iconImg(w.icon, w.label));
