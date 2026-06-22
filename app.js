@@ -466,7 +466,7 @@
     const tomorrow = new Date(todayDate + "T00:00:00");
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowDate = tomorrow.toISOString().slice(0, 10);
-    slots.push({ hour: 0, date: tomorrowDate, display: "24:00" });
+    slots.push({ hour: 0, date: tomorrowDate, display: "0:00" });
 
     // Build slot data from hourly arrays
     const slotData = slots.map((s) => {
