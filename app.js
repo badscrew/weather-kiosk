@@ -1047,7 +1047,7 @@
     if (tomorrowCard) {
       tomorrowCard.classList.remove("vigilance-yellow", "vigilance-orange", "vigilance-red");
       const a = alertsByDay[tomorrowKey];
-      if (a && a.color >= 3) { // orange (3) or red (4) only
+      if (a && a.color >= 2) { // yellow (2), orange (3), or red (4)
         const cls = ALERT_LEVELS[a.color];
         if (cls) tomorrowCard.classList.add(`vigilance-${cls}`);
       }

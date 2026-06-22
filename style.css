@@ -545,6 +545,7 @@ html, body {
 .today.vigilance-red    { border: 3px solid #cc0000; }
 
 /* Forecast card border when vigilance alert is active */
+.fc-card.vigilance-yellow { border: 3px solid #fff600; }
 .fc-card.vigilance-orange { border: 3px solid #ffb82b; }
 .fc-card.vigilance-red    { border: 3px solid #cc0000; }
 
