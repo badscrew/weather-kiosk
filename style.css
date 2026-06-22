@@ -365,28 +365,32 @@ html, body {
 }
 
 .td-precip {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   opacity: 0.85;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 .td-precip-icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   display: block;
 }
 
 .td-wind {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   opacity: 0.85;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
 }
 .td-wind-icon {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   display: block;
 }
 

@@ -521,8 +521,8 @@
         <div class="td-hour">${slot.display}</div>
         <div class="td-icon"></div>
         <div class="td-temp">${fmtInt(slot.temp)}°</div>
-        <div class="td-wind"><img class="td-wind-icon" src="icons/wind.svg" alt=""/>${slot.wind != null ? fmtInt(slot.wind) : "--"}</div>
-        <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</div>
+        <div class="td-wind"><img class="td-wind-icon" src="icons/wind.svg" alt=""/><span>${slot.wind != null ? fmtInt(slot.wind) : "--"}</span></div>
+        <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/><span>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</span></div>
       `;
       card.querySelector(".td-icon").appendChild(iconImg(w.icon, w.label));
       grid.appendChild(card);
