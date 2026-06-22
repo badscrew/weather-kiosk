@@ -289,6 +289,8 @@ html, body {
   flex-direction: column;
   align-items: stretch;
   gap: 0;
+  padding: 14px 10px 10px;
+  overflow: hidden;
 }
 
 .today-detail {
@@ -316,10 +318,11 @@ html, body {
 
 .today-detail-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
   flex: 1;
   min-height: 0;
+  min-width: 0;
 }
 
 .td-slot {
