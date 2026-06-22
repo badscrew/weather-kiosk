@@ -1230,6 +1230,21 @@
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) { fetchWeather(); fetchAlerts(); }
     });
+
+    // Full page reload once a day (between 03:00 and 04:00 local time) so
+    // the browser picks up any new version of the static assets without
+    // manual refresh. A random offset spreads traffic across the hour.
+    function scheduleDailyReload() {
+      const now = new Date();
+      const next = new Date(now);
+      next.setHours(3, 0, 0, 0);
+      if (next <= now) next.setDate(next.getDate() + 1);
+      // Add a random jitter of 0–59 minutes to avoid thundering herd
+      const jitterMs = Math.floor(Math.random() * 60 * 60 * 1000);
+      const ms = (next - now) + jitterMs;
+      setTimeout(() => location.reload(), ms);
+    }
+    scheduleDailyReload();
   }
 
   if (document.readyState === "loading") {
