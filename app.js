@@ -1406,6 +1406,32 @@
     setInterval(fetchWeather, refreshMs);
     setInterval(fetchAlerts, refreshMs);
 
+    // ---- Cursor auto-hide ------------------------------------------------
+    // On devices with a mouse, hide the cursor after 3 seconds of
+    // inactivity. Show it again immediately when the mouse moves.
+    (function initCursorAutoHide() {
+      let hideTimer = null;
+      const IDLE_MS = 3000;
+
+      function showCursor() {
+        document.documentElement.classList.remove("cursor-hidden");
+      }
+      function hideCursor() {
+        document.documentElement.classList.add("cursor-hidden");
+      }
+      function resetTimer() {
+        showCursor();
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(hideCursor, IDLE_MS);
+      }
+
+      document.addEventListener("mousemove", resetTimer);
+      document.addEventListener("mousedown", resetTimer);
+
+      // Start the idle timer right away.
+      hideTimer = setTimeout(hideCursor, IDLE_MS);
+    })();
+
     // Refetch when the tab becomes visible again (e.g. wake from screensaver)
     document.addEventListener("visibilitychange", () => {
       if (!document.hidden) { fetchWeather(); fetchAlerts(); }

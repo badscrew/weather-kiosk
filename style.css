@@ -693,6 +693,12 @@ html, body {
 .statusbar.error-visible #updated { display: none; }
 .statusbar.error-visible #status::before { content: "⚠ "; }
 
+/* ---------- Cursor auto-hide ---------- */
+/* Hide cursor after 3 s of mouse inactivity (kiosk use). */
+html.cursor-hidden, html.cursor-hidden * {
+  cursor: none !important;
+}
+
 /* ---------- States ---------- */
 .error { color: #ff8b8b; }
 .fade-in { animation: fadeIn 350ms ease-out; }
