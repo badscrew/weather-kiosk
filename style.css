@@ -539,6 +539,15 @@ html, body {
 .alert-chip.alert-orange { background: #ffb82b; color: #2a1300; border-color: rgba(0, 0, 0, 0.35); }
 .alert-chip.alert-red    { background: #cc0000; color: #ffffff; border-color: rgba(0, 0, 0, 0.35); }
 
+/* Today card border when vigilance alert is active */
+.today.vigilance-yellow { border: 3px solid #fff600; }
+.today.vigilance-orange { border: 3px solid #ffb82b; }
+.today.vigilance-red    { border: 3px solid #cc0000; }
+
+/* Forecast card border when vigilance alert is active */
+.fc-card.vigilance-orange { border: 3px solid #ffb82b; }
+.fc-card.vigilance-red    { border: 3px solid #cc0000; }
+
 /* Card variants are tiny chips on the forecast cards */
 .fc-card { position: relative; }
 .fc-card .alert-chip {

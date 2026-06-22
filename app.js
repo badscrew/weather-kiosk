@@ -118,6 +118,7 @@
         "is_day",
       ].join(","),
       minutely_15: "precipitation_probability",
+      hourly: "weather_code",
       daily: [
         "weather_code",
         "temperature_2m_max",
@@ -136,6 +137,58 @@
       forecast_days: "7",
     });
     return `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
+  }
+
+  // ---- Predominant daytime weather code --------------------------------
+  // Instead of using the daily weather_code (which picks the "worst"
+  // condition from any hour), we derive the most frequent code during
+  // daytime hours (7:00–21:00) from hourly data. This better matches what
+  // forecasters show on weather sites.
+  // WMO severity order: higher = more significant. When two codes tie in
+  // frequency, the more significant one wins.
+  const WMO_SEVERITY = {
+    0:0, 1:1, 2:2, 3:3, 45:4, 48:5,
+    51:6, 53:7, 55:8, 56:9, 57:10,
+    61:11, 63:12, 65:13, 66:14, 67:15,
+    71:16, 73:17, 75:18, 77:19,
+    80:20, 81:21, 82:22, 85:23, 86:24,
+    95:25, 96:26, 99:27,
+  };
+
+  function predominantDaytimeCode(data, dayIndex) {
+    const h = data.hourly;
+    if (!h || !h.time || !h.weather_code) return null;
+    const daily = data.daily;
+    if (!daily || !daily.time || !daily.time[dayIndex]) return null;
+
+    const dayDate = daily.time[dayIndex]; // "YYYY-MM-DD"
+    // Collect hourly codes for this day between 7:00 and 20:59 (local)
+    const codes = [];
+    for (let i = 0; i < h.time.length; i++) {
+      const t = h.time[i]; // "YYYY-MM-DDTHH:MM"
+      if (!t.startsWith(dayDate)) continue;
+      const hour = parseInt(t.substring(11, 13), 10);
+      if (hour >= 7 && hour <= 20 && h.weather_code[i] != null) {
+        codes.push(h.weather_code[i]);
+      }
+    }
+    if (codes.length === 0) return null;
+
+    // Count frequency of each code
+    const freq = {};
+    for (const c of codes) freq[c] = (freq[c] || 0) + 1;
+
+    // Pick the code with highest frequency; break ties by severity
+    let best = null;
+    let bestCount = 0;
+    for (const [code, count] of Object.entries(freq)) {
+      const c = Number(code);
+      if (count > bestCount || (count === bestCount && (WMO_SEVERITY[c] || 0) > (WMO_SEVERITY[best] || 0))) {
+        best = c;
+        bestCount = count;
+      }
+    }
+    return best;
   }
 
   // ---- Formatters ------------------------------------------------------
@@ -256,7 +309,9 @@
     // Show next N days (skip today, index 0)
     for (let i = 1; i <= count; i++) {
       if (!d.time || d.time[i] == null) continue;
-      const w = describe(d.weather_code[i], true);
+      // Use predominant daytime condition instead of the daily "worst" code.
+      const code = predominantDaytimeCode(data, i) ?? d.weather_code[i];
+      const w = describe(code, true);
       const card = document.createElement("div");
       card.className = "fc-card fade-in";
       card.dataset.date = d.time[i];
@@ -808,6 +863,8 @@
     alertsByDay = {};
     const t = $("today-alert");
     if (t) { t.hidden = true; t.className = "alert-chip"; t.textContent = ""; }
+    const todayCard = $("today");
+    if (todayCard) todayCard.classList.remove("vigilance-yellow", "vigilance-orange", "vigilance-red");
     document.querySelectorAll("#forecast .alert-chip").forEach((el) => el.remove());
   }
 
@@ -844,11 +901,14 @@
     try {
       const dept = await resolveDepartmentCode();
       if (!dept) { clearAlertChips(); return; }
-      // Only today's bulletin is rendered. Rendering J+1 on the
-      // "Tomorrow" card without J+2/J+3 was confusing.
-      const j0 = await fetchVigilance(dept, null);
+      // Fetch today (J0) and tomorrow (J+1) vigilance bulletins.
+      const [j0, j1] = await Promise.all([
+        fetchVigilance(dept, null),
+        fetchVigilance(dept, "J1"),
+      ]);
       const byDay = {};
       mergeVigilanceInto(byDay, j0);
+      mergeVigilanceInto(byDay, j1);
 
       // Convert reason sets to arrays for easier rendering.
       alertsByDay = {};
@@ -945,6 +1005,10 @@
     // Today's chip
     const todayKey = dayKey(new Date());
     const todayChip = $("today-alert");
+    const todayCard = $("today");
+    // Remove any previous vigilance border
+    if (todayCard) todayCard.classList.remove("vigilance-yellow", "vigilance-orange", "vigilance-red");
+
     if (todayChip) {
       const a = alertsByDay[todayKey];
       if (a && a.color >= 2) {
@@ -962,6 +1026,8 @@
         todayChip.setAttribute("target", "_blank");
         todayChip.setAttribute("rel", "noopener");
         todayChip.hidden = false;
+        // Apply vigilance border to the today card (yellow, orange, red only)
+        if (todayCard && cls) todayCard.classList.add(`vigilance-${cls}`);
       } else {
         todayChip.hidden = true;
         todayChip.className = "alert-chip";
@@ -971,8 +1037,23 @@
       }
     }
 
-    // No chips on forecast cards: showing only J+1 without J+2/J+3
-    // would be misleading. Make sure any leftover chip is removed.
+    // Tomorrow's forecast card: apply vigilance border (orange/red only)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowKey = dayKey(tomorrow);
+    const tomorrowIso = tomorrow.toISOString().slice(0, 10);
+    // Find the forecast card for tomorrow by its data-date attribute
+    const tomorrowCard = document.querySelector(`#forecast .fc-card[data-date="${tomorrowIso}"]`);
+    if (tomorrowCard) {
+      tomorrowCard.classList.remove("vigilance-yellow", "vigilance-orange", "vigilance-red");
+      const a = alertsByDay[tomorrowKey];
+      if (a && a.color >= 3) { // orange (3) or red (4) only
+        const cls = ALERT_LEVELS[a.color];
+        if (cls) tomorrowCard.classList.add(`vigilance-${cls}`);
+      }
+    }
+
+    // Remove any leftover alert chips on forecast cards.
     document.querySelectorAll("#forecast .alert-chip").forEach((el) => el.remove());
   }
 
