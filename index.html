@@ -44,7 +44,9 @@
     <!-- Main content: today + 3-day forecast -->
     <section class="content">
       <!-- Today panel -->
-      <div class="today" id="today">
+      <div class="today" id="today" role="button" tabindex="0"
+        data-i18n-attr="aria-label" data-i18n-attr-key="todayToggleAria"
+        aria-label="Tap to switch between summary and 3-hour detail">
         <a class="alert-chip" id="today-alert" hidden></a>
         <div class="today-icon" id="today-icon">--</div>
         <div class="today-temp">
