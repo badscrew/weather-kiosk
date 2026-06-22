@@ -505,8 +505,7 @@
     const header = document.createElement("div");
     header.className = "today-detail-header";
     const todayLabel = window.I18N ? window.I18N.t("today") : "Today";
-    const detailLabel = window.I18N ? window.I18N.t("todayDetail") : "6h forecast";
-    header.innerHTML = `<span class="today-detail-title">${todayLabel}</span><span class="today-detail-sub">${detailLabel}</span>`;
+    header.innerHTML = `<span class="today-detail-title">${todayLabel}</span>`;
     detail.appendChild(header);
 
     // Slot cards
