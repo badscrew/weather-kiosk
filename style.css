@@ -280,6 +280,98 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+/* ---------- Today detail (6h breakdown) ---------- */
+.today.today--detail {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+
+.today-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.today-detail-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.today-detail-title {
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0.95;
+}
+.today-detail-sub {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.today-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+}
+
+.td-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.td-hour {
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.9;
+  font-variant-numeric: tabular-nums;
+}
+
+.td-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+.td-icon img {
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+
+.td-temp {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  margin: 4px 0;
+}
+
+.td-precip {
+  font-size: 13px;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.td-precip-icon {
+  width: 14px;
+  height: 14px;
+  display: block;
 }
 
 .today-icon {

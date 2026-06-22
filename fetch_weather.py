@@ -21,7 +21,11 @@ params = urllib.parse.urlencode({
         "wind_direction_10m",
         "is_day",
     ]),
-    "hourly": "weather_code",
+    "hourly": ",".join([
+        "weather_code",
+        "temperature_2m",
+        "precipitation_probability",
+    ]),
     "minutely_15": "precipitation_probability",
     "daily": ",".join([
         "weather_code",

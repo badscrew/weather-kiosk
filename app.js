@@ -118,7 +118,7 @@
         "is_day",
       ].join(","),
       minutely_15: "precipitation_probability",
-      hourly: "weather_code",
+      hourly: ["weather_code", "temperature_2m", "precipitation_probability"].join(","),
       daily: [
         "weather_code",
         "temperature_2m_max",
@@ -262,6 +262,59 @@
   }
 
   function renderToday(data) {
+    const el = $("today");
+
+    // If detail view is active, render the hourly breakdown instead.
+    if (todayView === TODAY_VIEWS.DETAIL) {
+      renderTodayDetail(data);
+      return;
+    }
+
+    // Ensure we're in summary mode (remove detail class, rebuild DOM if needed)
+    if (el.classList.contains("today--detail")) {
+      el.classList.remove("today--detail");
+      el.innerHTML = `
+        <a class="alert-chip" id="today-alert" hidden></a>
+        <div class="today-icon" id="today-icon">--</div>
+        <div class="today-temp">
+          <span class="temp-value" id="today-temp">--</span><span class="temp-unit">°</span>
+        </div>
+        <div class="today-condline">
+          <div class="today-cond" id="today-cond">--</div>
+          <div class="today-hilo">
+            <span><span data-i18n="hiAbbr">${window.I18N ? window.I18N.t("hiAbbr") : "H"}</span> <b id="today-high">--</b>°</span>
+            <span><span data-i18n="loAbbr">${window.I18N ? window.I18N.t("loAbbr") : "L"}</span> <b id="today-low">--</b>°</span>
+          </div>
+        </div>
+        <div class="today-meta">
+          <div class="meta-row">
+            <span class="meta-label" data-i18n="feels">${window.I18N ? window.I18N.t("feels") : "Feels"}</span>
+            <span class="meta-value" id="today-feels">--°</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label"><img class="meta-icon" src="icons/wind.svg" alt="${window.I18N ? window.I18N.t("wind") : "Wind"}" /></span>
+            <span class="meta-value" id="today-wind">--</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label"><img class="meta-icon" src="icons/droplet.svg" alt="${window.I18N ? window.I18N.t("humidity") : "Humidity"}" /></span>
+            <span class="meta-value" id="today-humidity">--%</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label"><img class="meta-icon" src="icons/umbrella.svg" alt="${window.I18N ? window.I18N.t("rain") : "Rain"}" /></span>
+            <span class="meta-value" id="today-precip">--%</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label"><img class="meta-icon" src="icons/sunrise.svg" alt="${window.I18N ? window.I18N.t("sunrise") : "Sunrise"}" /></span>
+            <span class="meta-value" id="today-sunrise">--:--</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label"><img class="meta-icon" src="icons/sunset.svg" alt="${window.I18N ? window.I18N.t("sunset") : "Sunset"}" /></span>
+            <span class="meta-value" id="today-sunset">--:--</span>
+          </div>
+        </div>
+      `;
+    }
+
     const c = data.current || {};
     const daily = data.daily || {};
     const isDay = c.is_day === 1;
@@ -293,6 +346,9 @@
     if (CFG.locationName) {
       $("location").textContent = CFG.locationName;
     }
+
+    // Restore alert chips after rebuild
+    renderAlertChips();
   }
 
   function renderForecast(data) {
@@ -353,6 +409,125 @@
     root.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleForecastView(); }
     });
+  }
+
+  // ---- Today detail view (6h breakdown) --------------------------------
+  // Toggles between the current summary and a 6-hourly breakdown for today
+  // showing weather, temperature, and rain probability at 06:00, 12:00,
+  // 18:00, and 00:00 (next day).
+  const TODAY_VIEW_KEY = "kiosk.todayview";
+  const TODAY_VIEWS = { SUMMARY: "summary", DETAIL: "detail" };
+  let todayView = TODAY_VIEWS.SUMMARY;
+  try {
+    const v = localStorage.getItem(TODAY_VIEW_KEY);
+    if (v === TODAY_VIEWS.DETAIL || v === TODAY_VIEWS.SUMMARY) todayView = v;
+  } catch (_) { /* ignore */ }
+
+  function toggleTodayView() {
+    todayView = todayView === TODAY_VIEWS.SUMMARY ? TODAY_VIEWS.DETAIL : TODAY_VIEWS.SUMMARY;
+    try { localStorage.setItem(TODAY_VIEW_KEY, todayView); } catch (_) {}
+    if (lastWeatherData) renderToday(lastWeatherData);
+  }
+
+  function wireTodayToggle() {
+    const el = $("today");
+    if (!el) return;
+    el.addEventListener("click", (e) => {
+      // Don't toggle if clicking the alert chip link
+      if (e.target.closest(".alert-chip")) return;
+      toggleTodayView();
+    });
+    el.addEventListener("keydown", (e) => {
+      if (e.target.closest(".alert-chip")) return;
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleTodayView(); }
+    });
+  }
+
+  function renderTodayDetail(data) {
+    const el = $("today");
+    if (!el) return;
+    const hourly = data.hourly || {};
+    const daily = data.daily || {};
+    if (!hourly.time || !hourly.weather_code || !hourly.temperature_2m) return;
+
+    // Get today's date string
+    const todayDate = daily.time ? daily.time[0] : new Date().toISOString().slice(0, 10);
+
+    // Target hours: 06, 12, 18, and 00 next day
+    const slots = [
+      { hour: 6, date: todayDate },
+      { hour: 12, date: todayDate },
+      { hour: 18, date: todayDate },
+    ];
+    // 00:00 next day
+    const tomorrow = new Date(todayDate + "T00:00:00");
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowDate = tomorrow.toISOString().slice(0, 10);
+    slots.push({ hour: 0, date: tomorrowDate });
+
+    // Build slot data from hourly arrays
+    const slotData = slots.map((s) => {
+      const targetTime = `${s.date}T${String(s.hour).padStart(2, "0")}:00`;
+      const idx = hourly.time.indexOf(targetTime);
+      if (idx < 0) return null;
+      return {
+        hour: s.hour,
+        time: targetTime,
+        code: hourly.weather_code[idx],
+        temp: hourly.temperature_2m[idx],
+        precip: hourly.precipitation_probability ? hourly.precipitation_probability[idx] : null,
+      };
+    }).filter(Boolean);
+
+    if (slotData.length === 0) return;
+
+    // Show the detail panel, hide the summary content
+    el.classList.add("today--detail");
+    el.innerHTML = "";
+
+    // Re-add the alert chip
+    const alertEl = document.createElement("a");
+    alertEl.className = "alert-chip";
+    alertEl.id = "today-alert";
+    alertEl.hidden = true;
+    el.appendChild(alertEl);
+
+    // Build the detail grid
+    const detail = document.createElement("div");
+    detail.className = "today-detail";
+
+    // Header row with today's date
+    const header = document.createElement("div");
+    header.className = "today-detail-header";
+    const todayLabel = window.I18N ? window.I18N.t("today") : "Today";
+    const detailLabel = window.I18N ? window.I18N.t("todayDetail") : "6h forecast";
+    header.innerHTML = `<span class="today-detail-title">${todayLabel}</span><span class="today-detail-sub">${detailLabel}</span>`;
+    detail.appendChild(header);
+
+    // Slot cards
+    const grid = document.createElement("div");
+    grid.className = "today-detail-grid";
+
+    for (const slot of slotData) {
+      const w = describe(slot.code, slot.hour >= 7 && slot.hour <= 20);
+      const card = document.createElement("div");
+      card.className = "td-slot";
+      const hourStr = String(slot.hour).padStart(2, "0") + ":00";
+      card.innerHTML = `
+        <div class="td-hour">${hourStr}</div>
+        <div class="td-icon"></div>
+        <div class="td-temp">${fmtInt(slot.temp)}°</div>
+        <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</div>
+      `;
+      card.querySelector(".td-icon").appendChild(iconImg(w.icon, w.label));
+      grid.appendChild(card);
+    }
+
+    detail.appendChild(grid);
+    el.appendChild(detail);
+
+    // Restore alert chips
+    renderAlertChips();
   }
 
   // ---- Precipitation strip --------------------------------------------
@@ -1219,6 +1394,7 @@
     resolveLocationName();
     wireLocationDialog();
     wireForecastToggle();
+    wireTodayToggle();
 
     fetchWeather();
     fetchAlerts();
