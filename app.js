@@ -453,17 +453,20 @@
     // Get today's date string
     const todayDate = daily.time ? daily.time[0] : new Date().toISOString().slice(0, 10);
 
-    // Target hours: 06, 12, 18, and 00 next day
+    // Target hours: 06, 09, 12, 15, 18, 21, and 24 (00:00 next day shown as "24:00")
     const slots = [
-      { hour: 6, date: todayDate },
-      { hour: 12, date: todayDate },
-      { hour: 18, date: todayDate },
+      { hour: 6, date: todayDate, display: "06:00" },
+      { hour: 9, date: todayDate, display: "09:00" },
+      { hour: 12, date: todayDate, display: "12:00" },
+      { hour: 15, date: todayDate, display: "15:00" },
+      { hour: 18, date: todayDate, display: "18:00" },
+      { hour: 21, date: todayDate, display: "21:00" },
     ];
-    // 00:00 next day
+    // 24:00 = 00:00 next day, displayed as "24:00"
     const tomorrow = new Date(todayDate + "T00:00:00");
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowDate = tomorrow.toISOString().slice(0, 10);
-    slots.push({ hour: 0, date: tomorrowDate });
+    slots.push({ hour: 0, date: tomorrowDate, display: "24:00" });
 
     // Build slot data from hourly arrays
     const slotData = slots.map((s) => {
@@ -472,6 +475,7 @@
       if (idx < 0) return null;
       return {
         hour: s.hour,
+        display: s.display,
         time: targetTime,
         code: hourly.weather_code[idx],
         temp: hourly.temperature_2m[idx],
@@ -512,9 +516,8 @@
       const w = describe(slot.code, slot.hour >= 7 && slot.hour <= 20);
       const card = document.createElement("div");
       card.className = "td-slot";
-      const hourStr = String(slot.hour).padStart(2, "0") + ":00";
       card.innerHTML = `
-        <div class="td-hour">${hourStr}</div>
+        <div class="td-hour">${slot.display}</div>
         <div class="td-icon"></div>
         <div class="td-temp">${fmtInt(slot.temp)}°</div>
         <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</div>

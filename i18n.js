@@ -70,8 +70,8 @@ window.I18N = (function () {
       // Forecast view toggle
       forecastToggleAria: "Tap to switch between 3-day and weekly forecast",
       // Today detail toggle
-      todayDetail: "6h forecast",
-      todayToggleAria: "Tap to switch between summary and 6-hour detail",
+      todayDetail: "3h forecast",
+      todayToggleAria: "Tap to switch between summary and 3-hour detail",
     },
     fr: {
       appTitle: "Kiosque Météo",
@@ -121,8 +121,8 @@ window.I18N = (function () {
       alertOrange: "orange",
       alertRed: "rouge",
       forecastToggleAria: "Touchez pour basculer entre les prévisions à 3 jours et hebdomadaires",
-      todayDetail: "Prévision 6h",
-      todayToggleAria: "Touchez pour basculer entre le résumé et le détail par 6 heures",
+      todayDetail: "Prévision 3h",
+      todayToggleAria: "Touchez pour basculer entre le résumé et le détail par 3 heures",
     },
     es: {
       appTitle: "Quiosco del Tiempo",
@@ -172,8 +172,8 @@ window.I18N = (function () {
       alertOrange: "naranja",
       alertRed: "roja",
       forecastToggleAria: "Toca para cambiar entre la previsión de 3 días y semanal",
-      todayDetail: "Previsión 6h",
-      todayToggleAria: "Toca para cambiar entre el resumen y el detalle por 6 horas",
+      todayDetail: "Previsión 3h",
+      todayToggleAria: "Toca para cambiar entre el resumen y el detalle por 3 horas",
     },
     de: {
       appTitle: "Wetter-Kiosk",
@@ -223,8 +223,8 @@ window.I18N = (function () {
       alertOrange: "orange",
       alertRed: "rot",
       forecastToggleAria: "Tippen, um zwischen 3-Tage- und Wochenvorhersage zu wechseln",
-      todayDetail: "6h-Vorhersage",
-      todayToggleAria: "Tippen, um zwischen Zusammenfassung und 6-Stunden-Detail zu wechseln",
+      todayDetail: "3h-Vorhersage",
+      todayToggleAria: "Tippen, um zwischen Zusammenfassung und 3-Stunden-Detail zu wechseln",
     },
     zh: {
       appTitle: "天气信息屏",
@@ -274,8 +274,8 @@ window.I18N = (function () {
       alertOrange: "橙色",
       alertRed: "红色",
       forecastToggleAria: "点按可在 3 天与一周预报之间切换",
-      todayDetail: "6小时预报",
-      todayToggleAria: "点按可在摘要与6小时详情之间切换",
+      todayDetail: "3小时预报",
+      todayToggleAria: "点按可在摘要与3小时详情之间切换",
     },
     hi: {
       appTitle: "मौसम कियोस्क",
@@ -325,8 +325,8 @@ window.I18N = (function () {
       alertOrange: "नारंगी",
       alertRed: "लाल",
       forecastToggleAria: "3-दिन और साप्ताहिक पूर्वानुमान के बीच स्विच करने के लिए टैप करें",
-      todayDetail: "6 घंटे पूर्वानुमान",
-      todayToggleAria: "सारांश और 6 घंटे विवरण के बीच स्विच करने के लिए टैप करें",
+      todayDetail: "3 घंटे पूर्वानुमान",
+      todayToggleAria: "सारांश और 3 घंटे विवरण के बीच स्विच करने के लिए टैप करें",
     },
     ar: {
       appTitle: "كشك الطقس",
@@ -376,8 +376,8 @@ window.I18N = (function () {
       alertOrange: "برتقالي",
       alertRed: "أحمر",
       forecastToggleAria: "اضغط للتبديل بين توقعات 3 أيام والتوقعات الأسبوعية",
-      todayDetail: "توقعات 6 ساعات",
-      todayToggleAria: "اضغط للتبديل بين الملخص وتفاصيل 6 ساعات",
+      todayDetail: "توقعات 3 ساعات",
+      todayToggleAria: "اضغط للتبديل بين الملخص وتفاصيل 3 ساعات",
     },
     bn: {
       appTitle: "আবহাওয়া কিয়স্ক",
@@ -427,8 +427,8 @@ window.I18N = (function () {
       alertOrange: "কমলা",
       alertRed: "লাল",
       forecastToggleAria: "৩-দিন ও সাপ্তাহিক পূর্বাভাসের মধ্যে পরিবর্তন করতে আলতো চাপুন",
-      todayDetail: "৬ ঘণ্টার পূর্বাভাস",
-      todayToggleAria: "সারাংশ ও ৬ ঘণ্টার বিবরণের মধ্যে পরিবর্তন করতে আলতো চাপুন",
+      todayDetail: "৩ ঘণ্টার পূর্বাভাস",
+      todayToggleAria: "সারাংশ ও ৩ ঘণ্টার বিবরণের মধ্যে পরিবর্তন করতে আলতো চাপুন",
     },
     pt: {
       appTitle: "Quiosque do Tempo",
@@ -478,8 +478,8 @@ window.I18N = (function () {
       alertOrange: "laranja",
       alertRed: "vermelho",
       forecastToggleAria: "Toque para alternar entre a previsão de 3 dias e semanal",
-      todayDetail: "Previsão 6h",
-      todayToggleAria: "Toque para alternar entre o resumo e o detalhe de 6 horas",
+      todayDetail: "Previsão 3h",
+      todayToggleAria: "Toque para alternar entre o resumo e o detalhe de 3 horas",
     },
     ru: {
       appTitle: "Погодный киоск",
@@ -529,8 +529,8 @@ window.I18N = (function () {
       alertOrange: "оранжевый",
       alertRed: "красный",
       forecastToggleAria: "Нажмите, чтобы переключаться между прогнозом на 3 дня и неделю",
-      todayDetail: "Прогноз 6ч",
-      todayToggleAria: "Нажмите, чтобы переключаться между сводкой и 6-часовым прогнозом",
+      todayDetail: "Прогноз 3ч",
+      todayToggleAria: "Нажмите, чтобы переключаться между сводкой и 3-часовым прогнозом",
     },
     it: {
       appTitle: "Chiosco Meteo",
@@ -580,8 +580,8 @@ window.I18N = (function () {
       alertOrange: "arancione",
       alertRed: "rosso",
       forecastToggleAria: "Tocca per passare tra previsioni a 3 giorni e settimanali",
-      todayDetail: "Previsione 6h",
-      todayToggleAria: "Tocca per passare tra il riepilogo e il dettaglio a 6 ore",
+      todayDetail: "Previsione 3h",
+      todayToggleAria: "Tocca per passare tra il riepilogo e il dettaglio a 3 ore",
     },
     ur: {
       appTitle: "موسم کیوسک",
@@ -631,8 +631,8 @@ window.I18N = (function () {
       alertOrange: "نارنجی",
       alertRed: "سرخ",
       forecastToggleAria: "3 دن اور ہفتہ وار پیش گوئی کے درمیان سوئچ کرنے کے لیے دبائیں",
-      todayDetail: "6 گھنٹے کی پیش گوئی",
-      todayToggleAria: "خلاصہ اور 6 گھنٹے کی تفصیل کے درمیان سوئچ کرنے کے لیے دبائیں",
+      todayDetail: "3 گھنٹے کی پیش گوئی",
+      todayToggleAria: "خلاصہ اور 3 گھنٹے کی تفصیل کے درمیان سوئچ کرنے کے لیے دبائیں",
     },
     id: {
       appTitle: "Kios Cuaca",
@@ -682,8 +682,8 @@ window.I18N = (function () {
       alertOrange: "jingga",
       alertRed: "merah",
       forecastToggleAria: "Ketuk untuk beralih antara prakiraan 3 hari dan mingguan",
-      todayDetail: "Prakiraan 6 jam",
-      todayToggleAria: "Ketuk untuk beralih antara ringkasan dan detail per 6 jam",
+      todayDetail: "Prakiraan 3 jam",
+      todayToggleAria: "Ketuk untuk beralih antara ringkasan dan detail per 3 jam",
     },
     ja: {
       appTitle: "天気キオスク",
@@ -733,8 +733,8 @@ window.I18N = (function () {
       alertOrange: "橙",
       alertRed: "赤",
       forecastToggleAria: "タップして3日間と週間予報を切り替え",
-      todayDetail: "6時間予報",
-      todayToggleAria: "タップして概要と6時間詳細を切り替え",
+      todayDetail: "3時間予報",
+      todayToggleAria: "タップして概要と3時間詳細を切り替え",
     },
   };
 
