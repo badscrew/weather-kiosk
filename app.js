@@ -1440,6 +1440,10 @@
     // Full page reload once a day (between 03:00 and 04:00 local time) so
     // the browser picks up any new version of the static assets without
     // manual refresh. A random offset spreads traffic across the hour.
+    // If the page is currently in fullscreen (tablet users in browser),
+    // skip the reload to avoid dropping them out of fullscreen — just
+    // refresh the data instead. They'll get new code on the next natural
+    // page load (tab restart, leaving fullscreen, etc.).
     function scheduleDailyReload() {
       const now = new Date();
       const next = new Date(now);
@@ -1448,7 +1452,17 @@
       // Add a random jitter of 0–59 minutes to avoid thundering herd
       const jitterMs = Math.floor(Math.random() * 60 * 60 * 1000);
       const ms = (next - now) + jitterMs;
-      setTimeout(() => location.reload(), ms);
+      setTimeout(() => {
+        if (fullscreenElement()) {
+          // Fullscreen active — don't reload, just refresh data and
+          // schedule the next daily check.
+          fetchWeather();
+          fetchAlerts();
+          scheduleDailyReload();
+        } else {
+          location.reload();
+        }
+      }, ms);
     }
     scheduleDailyReload();
   }
