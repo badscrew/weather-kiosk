@@ -118,7 +118,7 @@
         "is_day",
       ].join(","),
       minutely_15: "precipitation_probability",
-      hourly: ["weather_code", "temperature_2m", "precipitation_probability", "wind_speed_10m"].join(","),
+      hourly: ["weather_code", "temperature_2m", "precipitation_probability", "precipitation", "wind_speed_10m", "wind_direction_10m"].join(","),
       daily: [
         "weather_code",
         "temperature_2m_max",
@@ -224,6 +224,20 @@
     return dirs[Math.round(deg / 45) % 8];
   }
 
+  // Build an inline wind-direction arrow. The degree from the API is "wind
+  // from" direction, so we rotate the arrow 180° past that to show where
+  // the wind is blowing TO (more intuitive visually).
+  function windArrow(deg) {
+    if (deg == null || isNaN(deg)) return "";
+    const span = document.createElement("span");
+    span.className = "wind-arrow";
+    span.textContent = "↓";
+    span.style.display = "inline-block";
+    span.style.transform = `rotate(${(deg + 180) % 360}deg)`;
+    span.setAttribute("aria-label", compass(deg));
+    return span;
+  }
+
   function timeFromIso(iso) {
     if (!iso) return "--:--";
     // Open-Meteo daily sunrise/sunset format: "2024-01-01T07:42"
@@ -324,9 +338,12 @@
     $("today-temp").textContent = fmtInt(c.temperature_2m);
     $("today-cond").textContent = w.label;
     $("today-feels").textContent = fmtInt(c.apparent_temperature) + "°";
-    $("today-wind").textContent =
-      fmtInt(c.wind_speed_10m) + " " + windLabel +
-      (c.wind_direction_10m != null ? " " + compass(c.wind_direction_10m) : "");
+    $("today-wind").textContent = "";
+    const windEl = $("today-wind");
+    windEl.textContent = fmtInt(c.wind_speed_10m) + " " + windLabel + " ";
+    if (c.wind_direction_10m != null) {
+      windEl.appendChild(windArrow(c.wind_direction_10m));
+    }
     $("today-humidity").textContent = fmtInt(c.relative_humidity_2m) + "%";
 
     if (daily.temperature_2m_max && daily.temperature_2m_min) {
@@ -334,7 +351,12 @@
       $("today-low").textContent = fmtInt(daily.temperature_2m_min[0]);
     }
     if (daily.precipitation_probability_max) {
-      $("today-precip").textContent = fmtInt(daily.precipitation_probability_max[0]) + "%";
+      let precipText = fmtInt(daily.precipitation_probability_max[0]) + "%";
+      const precipSum = daily.precipitation_sum ? daily.precipitation_sum[0] : null;
+      if (precipSum != null && precipSum > 0) {
+        precipText += " · " + precipSum.toFixed(1) + " " + precipUnit;
+      }
+      $("today-precip").textContent = precipText;
     }
     if (daily.sunrise && daily.sunset) {
       $("today-sunrise").textContent = timeFromIso(daily.sunrise[0]);
@@ -371,6 +393,12 @@
       const card = document.createElement("div");
       card.className = "fc-card fade-in";
       card.dataset.date = d.time[i];
+      const precipProb = fmtInt(d.precipitation_probability_max[i]);
+      const precipSum = d.precipitation_sum ? d.precipitation_sum[i] : null;
+      let precipLabel = precipProb + "%";
+      if (precipSum != null && precipSum > 0) {
+        precipLabel += " · " + precipSum.toFixed(1) + " " + precipUnit;
+      }
       card.innerHTML = `
         <div class="fc-day">${dayName(d.time[i], i)}</div>
         <div class="fc-icon"></div>
@@ -379,7 +407,7 @@
           <span class="fc-high">${fmtInt(d.temperature_2m_max[i])}°</span>
           <span class="fc-low">${fmtInt(d.temperature_2m_min[i])}°</span>
         </div>
-        <div class="fc-precip"><img class="fc-precip-icon" src="icons/umbrella.svg" alt=""/>${fmtInt(d.precipitation_probability_max[i])}%</div>
+        <div class="fc-precip"><img class="fc-precip-icon" src="icons/umbrella.svg" alt=""/>${precipLabel}</div>
       `;
       card.querySelector(".fc-icon").appendChild(iconImg(w.icon, w.label));
       root.appendChild(card);
@@ -480,7 +508,9 @@
         code: hourly.weather_code[idx],
         temp: hourly.temperature_2m[idx],
         precip: hourly.precipitation_probability ? hourly.precipitation_probability[idx] : null,
+        precipMm: hourly.precipitation ? hourly.precipitation[idx] : null,
         wind: hourly.wind_speed_10m ? hourly.wind_speed_10m[idx] : null,
+        windDir: hourly.wind_direction_10m ? hourly.wind_direction_10m[idx] : null,
       };
     }).filter(Boolean);
 
@@ -524,6 +554,9 @@
         <div class="td-precip"><img class="td-precip-icon" src="icons/umbrella.svg" alt=""/><span>${slot.precip != null ? fmtInt(slot.precip) + "%" : "--"}</span></div>
       `;
       card.querySelector(".td-icon").appendChild(iconImg(w.icon, w.label));
+      if (slot.windDir != null) {
+        card.querySelector(".td-wind").appendChild(windArrow(slot.windDir));
+      }
       grid.appendChild(card);
     }
 

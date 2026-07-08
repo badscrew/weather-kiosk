@@ -25,6 +25,7 @@ params = urllib.parse.urlencode({
         "weather_code",
         "temperature_2m",
         "precipitation_probability",
+        "precipitation",
     ]),
     "minutely_15": "precipitation_probability",
     "daily": ",".join([
