@@ -245,6 +245,36 @@
     return fmtClock(d);
   }
 
+  // ---- Moon phase calculation ------------------------------------------
+  // Simple algorithmic moon phase based on the synodic month (29.53 days).
+  // Uses a known new moon reference date (Jan 6, 2000 18:14 UTC) and
+  // computes the fractional position in the current lunar cycle.
+  const SYNODIC_MONTH = 29.53058770576;
+  const NEW_MOON_REF = Date.UTC(2000, 0, 6, 18, 14); // Jan 6, 2000
+
+  // Returns { phase: 0-7, emoji, nameKey } for the given Date.
+  // Phases: 0=New, 1=Waxing Crescent, 2=First Quarter, 3=Waxing Gibbous,
+  //         4=Full, 5=Waning Gibbous, 6=Last Quarter, 7=Waning Crescent
+  const MOON_PHASES = [
+    { emoji: "🌑", nameKey: "moonNew" },
+    { emoji: "🌒", nameKey: "moonWaxCrescent" },
+    { emoji: "🌓", nameKey: "moonFirstQuarter" },
+    { emoji: "🌔", nameKey: "moonWaxGibbous" },
+    { emoji: "🌕", nameKey: "moonFull" },
+    { emoji: "🌖", nameKey: "moonWanGibbous" },
+    { emoji: "🌗", nameKey: "moonLastQuarter" },
+    { emoji: "🌘", nameKey: "moonWanCrescent" },
+  ];
+
+  function getMoonPhase(date) {
+    const diff = date.getTime() - NEW_MOON_REF;
+    const days = diff / (1000 * 60 * 60 * 24);
+    const cycles = days / SYNODIC_MONTH;
+    const frac = cycles - Math.floor(cycles); // 0..1 position in cycle
+    const idx = Math.round(frac * 8) % 8;
+    return { phase: idx, ...MOON_PHASES[idx] };
+  }
+
   // ---- Render ----------------------------------------------------------
   function renderClock() {
     const now = new Date();
@@ -292,6 +322,7 @@
         <div class="today-icon" id="today-icon">--</div>
         <div class="today-temp">
           <span class="temp-value" id="today-temp">--</span><span class="temp-unit">°</span>
+          <div class="today-feels" id="today-feels">--°</div>
         </div>
         <div class="today-condline">
           <div class="today-cond" id="today-cond">--</div>
@@ -302,8 +333,8 @@
         </div>
         <div class="today-meta">
           <div class="meta-row">
-            <span class="meta-label" data-i18n="feels">${window.I18N ? window.I18N.t("feels") : "Feels"}</span>
-            <span class="meta-value" id="today-feels">--°</span>
+            <span class="meta-label" id="today-moon-icon">🌑</span>
+            <span class="meta-value" id="today-moon">--</span>
           </div>
           <div class="meta-row">
             <span class="meta-label"><img class="meta-icon" src="icons/wind.svg" alt="${window.I18N ? window.I18N.t("wind") : "Wind"}" /></span>
@@ -337,7 +368,8 @@
     $("today-icon").replaceChildren(iconImg(w.icon, w.label));
     $("today-temp").textContent = fmtInt(c.temperature_2m);
     $("today-cond").textContent = w.label;
-    $("today-feels").textContent = fmtInt(c.apparent_temperature) + "°";
+    const feelsLabel = window.I18N ? window.I18N.t("feels") : "Feels";
+    $("today-feels").textContent = "(" + feelsLabel + " " + fmtInt(c.apparent_temperature) + "°)";
     $("today-wind").textContent = "";
     const windEl = $("today-wind");
     windEl.textContent = fmtInt(c.wind_speed_10m) + " " + windLabel + " ";
@@ -345,6 +377,13 @@
       windEl.appendChild(windArrow(c.wind_direction_10m));
     }
     $("today-humidity").textContent = fmtInt(c.relative_humidity_2m) + "%";
+
+    // Moon phase
+    const moon = getMoonPhase(new Date());
+    const moonIconEl = $("today-moon-icon");
+    const moonEl = $("today-moon");
+    if (moonIconEl) moonIconEl.textContent = moon.emoji;
+    if (moonEl) moonEl.textContent = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
 
     if (daily.temperature_2m_max && daily.temperature_2m_min) {
       $("today-high").textContent = fmtInt(daily.temperature_2m_max[0]);
