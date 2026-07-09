@@ -487,7 +487,7 @@ html, body {
 .meta-label { opacity: 0.85; display: inline-flex; align-items: center; justify-content: flex-end; }
 .meta-icon { width: 20px; height: 20px; display: block; }
 .meta-value { font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; }
-.wind-arrow { font-size: 1.1em; line-height: 1; vertical-align: middle; }
+.wind-arrow { font-size: 1.3em; line-height: 1; vertical-align: middle; -webkit-text-stroke: 1px currentColor; }
 
 /* ---------- 3-day forecast ---------- */
 .forecast {
