@@ -724,22 +724,22 @@
       block.className = "precip-block";
 
       if (t != null && pct != null) {
-        const c = precipColor(pct);
-        block.style.backgroundColor = c.fill;
-        // Pick black or white text for legibility against the fill color.
-        const labelColor = c.lum > 160 ? "#0b1220" : "#ffffff";
-        block.style.setProperty("--label", labelColor);
+        const p = Math.max(0, Math.min(100, Math.round(pct)));
+        // Fill from bottom: transparent on top, blue on bottom proportional to %.
+        block.style.background = p > 0
+          ? `linear-gradient(to top, rgba(30, 144, 255, 0.85) ${p}%, transparent ${p}%)`
+          : "";
 
         const dt = new Date(t);
         const isHourStart = dt.getMinutes() === 0;
         if (isHourStart) block.classList.add("hour-start");
-        block.title = `${fmtClock(dt)} - ${Math.round(pct)}%`;
+        block.title = `${fmtClock(dt)} - ${p}%`;
 
         // Show the % only on hour boundaries to keep the strip readable.
         if (isHourStart) {
           const lab = document.createElement("span");
           lab.className = "pct";
-          lab.textContent = Math.round(pct) + "%";
+          lab.textContent = p + "%";
           block.appendChild(lab);
         }
       }
