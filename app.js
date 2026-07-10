@@ -95,6 +95,18 @@
     return img;
   }
 
+  // Shrink the condition label font until it fits on one line.
+  function fitCondText(el) {
+    if (!el) return;
+    el.style.fontSize = "";
+    const max = 22; // default font-size in px
+    const min = 14;
+    for (let size = max; size >= min; size--) {
+      el.style.fontSize = size + "px";
+      if (el.scrollWidth <= el.clientWidth) return;
+    }
+  }
+
   // ---- Units helpers ---------------------------------------------------
   const isImperial = (CFG.units || "metric").toLowerCase() === "imperial";
   const tempUnit = isImperial ? "fahrenheit" : "celsius";
@@ -368,6 +380,8 @@
     $("today-icon").replaceChildren(iconImg(w.icon, w.label));
     $("today-temp").textContent = fmtInt(c.temperature_2m);
     $("today-cond").textContent = w.label;
+    // Shrink font if the condition text doesn't fit in one line.
+    fitCondText($("today-cond"));
     const feelsLabel = window.I18N ? window.I18N.t("feels") : "Feels";
     $("today-feels").textContent = "(" + feelsLabel + " " + fmtInt(c.apparent_temperature) + "°)";
     $("today-wind").textContent = "";

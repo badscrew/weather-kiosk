@@ -456,6 +456,9 @@ html, body {
   font-size: 22px;
   opacity: 0.9;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .today-hilo {
