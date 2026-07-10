@@ -10,7 +10,7 @@ No build step, no backend, no API key. Just static files served by anything (or 
 
 - Today panel and three forecast cards (today + 3 next days) with icon, conditions, high/low, precipitation chance
 - Tap the forecast row to switch between the 3-day view and a 7-day week view; the choice is remembered across reloads
-- Today details: feels-like, wind speed + direction, humidity, sunrise, sunset
+- Today details: feels-like, wind speed + direction, moon phases, humidity, precipitation probability and quantity, sunrise, sunset
 - 15-minute precipitation-probability strip for the next 4 hours, color-coded white → light blue → blue → dark blue (0 → 50 → 75 → 100%)
 - Live clock front-and-center, plus the location's local time appended to the city name when it differs from the device timezone
 - Touch-sensitive location header that opens a picker dialog
