@@ -725,10 +725,10 @@
 
       if (t != null && pct != null) {
         const p = Math.max(0, Math.min(100, Math.round(pct)));
-        // Fill from bottom: transparent on top, blue on bottom proportional to %.
-        block.style.background = p > 0
-          ? `linear-gradient(to top, rgba(30, 144, 255, 0.85) ${p}%, transparent ${p}%)`
-          : "";
+        // Fill from bottom: blue on bottom proportional to %.
+        if (p > 0) {
+          block.style.background = `linear-gradient(to top, rgba(30, 144, 255, 0.85) ${p}%, rgba(255, 255, 255, 0.08) ${p}%)`;
+        }
 
         const dt = new Date(t);
         const isHourStart = dt.getMinutes() === 0;
