@@ -554,7 +554,7 @@ html, body {
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-.forecast.week .fc-card { padding: 12px 8px 14px; border-radius: 12px; }
+.forecast.week .fc-card { padding: 12px 8px 8px; border-radius: 12px; }
 .forecast.week .fc-day { font-size: 18px; }
 .forecast.week .fc-icon { margin: 2px 0; }
 .forecast.week .fc-icon img { width: 48px; height: 48px; }
