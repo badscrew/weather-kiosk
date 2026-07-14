@@ -560,7 +560,7 @@ html, body {
 .forecast.week .fc-icon img { width: 48px; height: 48px; }
 .forecast.week .fc-cond { display: none; }
 .forecast.week .fc-humidity { display: none; }
-.forecast.week .fc-precip { margin-top: auto; }
+.forecast.week .fc-precip { margin-top: auto; min-height: 0; padding-bottom: 4px; }
 .forecast.week .fc-high { font-size: 22px; }
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
