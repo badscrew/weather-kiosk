@@ -269,18 +269,18 @@
   const SYNODIC_MONTH = 29.53058770576;
   const NEW_MOON_REF = Date.UTC(2000, 0, 6, 18, 14); // Jan 6, 2000
 
-  // Returns { phase: 0-7, emoji, nameKey } for the given Date.
+  // Returns { phase: 0-7, icon, nameKey } for the given Date.
   // Phases: 0=New, 1=Waxing Crescent, 2=First Quarter, 3=Waxing Gibbous,
   //         4=Full, 5=Waning Gibbous, 6=Last Quarter, 7=Waning Crescent
   const MOON_PHASES = [
-    { emoji: "🌑", nameKey: "moonNew" },
-    { emoji: "🌒", nameKey: "moonWaxCrescent" },
-    { emoji: "🌓", nameKey: "moonFirstQuarter" },
-    { emoji: "🌔", nameKey: "moonWaxGibbous" },
-    { emoji: "🌕", nameKey: "moonFull" },
-    { emoji: "🌖", nameKey: "moonWanGibbous" },
-    { emoji: "🌗", nameKey: "moonLastQuarter" },
-    { emoji: "🌘", nameKey: "moonWanCrescent" },
+    { icon: ICON("moon-new"), nameKey: "moonNew" },
+    { icon: ICON("moon-waxing-crescent"), nameKey: "moonWaxCrescent" },
+    { icon: ICON("moon-first-quarter"), nameKey: "moonFirstQuarter" },
+    { icon: ICON("moon-waxing-gibbous"), nameKey: "moonWaxGibbous" },
+    { icon: ICON("moon-full"), nameKey: "moonFull" },
+    { icon: ICON("moon-waning-gibbous"), nameKey: "moonWanGibbous" },
+    { icon: ICON("moon-last-quarter"), nameKey: "moonLastQuarter" },
+    { icon: ICON("moon-waning-crescent"), nameKey: "moonWanCrescent" },
   ];
 
   function getMoonPhase(date) {
@@ -350,7 +350,7 @@
         </div>
         <div class="today-meta">
           <div class="meta-row">
-            <span class="meta-label" id="today-moon-icon">🌑</span>
+            <span class="meta-label" id="today-moon-icon"><img class="meta-icon" src="icons/moon-new.svg" alt="Moon" /></span>
             <span class="meta-value" id="today-moon">--</span>
           </div>
           <div class="meta-row">
@@ -401,7 +401,10 @@
     const moon = getMoonPhase(new Date());
     const moonIconEl = $("today-moon-icon");
     const moonEl = $("today-moon");
-    if (moonIconEl) moonIconEl.textContent = moon.emoji;
+    if (moonIconEl) {
+      const moonName = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
+      moonIconEl.innerHTML = `<img class="meta-icon" src="${moon.icon}" alt="${moonName}" />`;
+    }
     if (moonEl) moonEl.textContent = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
 
     if (daily.temperature_2m_max && daily.temperature_2m_min) {
