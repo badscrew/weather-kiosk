@@ -619,6 +619,7 @@ html, body {
 }
 .fc-precip-sum {
   font-size: 13px;
+  font-weight: 700;
   opacity: 0.75;
   width: 100%;
   text-align: center;
