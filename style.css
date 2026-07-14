@@ -563,6 +563,7 @@ html, body {
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
 .forecast.week .fc-precip-icon { width: 14px; height: 14px; }
+.forecast.week .fc-precip-sum { display: none; }
 
 .fc-card {
   display: flex;
@@ -602,14 +603,19 @@ html, body {
   opacity: 0.85;
   margin-top: 2px;
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
   white-space: nowrap;
 }
 .fc-precip-icon {
   width: 16px;
   height: 16px;
   display: block;
+}
+.fc-precip-sum {
+  font-size: 13px;
+  opacity: 0.75;
 }
 
 /* ---------- Precipitation strip ---------- */
