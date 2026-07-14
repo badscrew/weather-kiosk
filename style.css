@@ -598,7 +598,7 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 .fc-high { font-size: 26px; font-weight: 700; }
-.fc-low { font-size: 18px; opacity: 0.7; }
+.fc-low { font-size: 18px; opacity: 0.7; font-weight: 700; }
 .fc-precip {
   font-size: 16px;
   opacity: 0.85;
