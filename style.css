@@ -554,11 +554,13 @@ html, body {
   grid-template-rows: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
-.forecast.week .fc-card { padding: 12px 8px 10px; border-radius: 12px; }
+.forecast.week .fc-card { padding: 12px 8px 8px; border-radius: 12px; }
 .forecast.week .fc-day { font-size: 18px; }
 .forecast.week .fc-icon { margin: 2px 0; }
 .forecast.week .fc-icon img { width: 48px; height: 48px; }
 .forecast.week .fc-cond { display: none; }
+.forecast.week .fc-humidity { display: none; }
+.forecast.week .fc-precip { margin-top: auto; min-height: 0; padding-bottom: 4px; }
 .forecast.week .fc-high { font-size: 22px; }
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
@@ -602,8 +604,8 @@ html, body {
 .fc-precip {
   font-size: 16px;
   opacity: 0.85;
-  margin-top: auto;
-  padding-top: 4px;
+  margin-top: 6px;
+  min-height: 44px;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
@@ -620,6 +622,21 @@ html, body {
   opacity: 0.85;
   width: 100%;
   text-align: center;
+}
+
+.fc-humidity {
+  font-size: 16px;
+  opacity: 0.85;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.fc-humidity-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 /* ---------- Precipitation strip ---------- */

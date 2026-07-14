@@ -139,6 +139,7 @@
         "weather_code",
         "temperature_2m_max",
         "temperature_2m_min",
+        "relative_humidity_2m_mean",
         "precipitation_probability_max",
         "precipitation_sum",
         "wind_speed_10m_max",
@@ -457,6 +458,7 @@
       if (precipSum != null && precipSum > 0) {
         precipSumHtml = `<span class="fc-precip-sum">${precipSum.toFixed(1)} ${precipUnit}</span>`;
       }
+      const humidity = d.relative_humidity_2m_mean ? fmtInt(d.relative_humidity_2m_mean[i]) : "--";
       card.innerHTML = `
         <div class="fc-day">${dayName(d.time[i], i)}</div>
         <div class="fc-icon"></div>
@@ -465,6 +467,7 @@
           <span class="fc-high">${fmtInt(d.temperature_2m_max[i])}°</span>
           <span class="fc-low">${fmtInt(d.temperature_2m_min[i])}°</span>
         </div>
+        <div class="fc-humidity"><img class="fc-humidity-icon" src="icons/droplet.svg" alt=""/>${humidity}%</div>
         <div class="fc-precip"><img class="fc-precip-icon" src="icons/umbrella.svg" alt=""/>${precipLabel}${precipSumHtml}</div>
       `;
       card.querySelector(".fc-icon").appendChild(iconImg(w.icon, w.label));
