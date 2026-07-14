@@ -536,7 +536,7 @@ html, body {
 .meta-label { opacity: 0.85; display: inline-flex; align-items: center; justify-content: flex-end; }
 .meta-icon { width: 20px; height: 20px; display: block; }
 .meta-value { font-weight: 600; font-variant-numeric: tabular-nums; text-align: left; white-space: nowrap; }
-.wind-arrow { font-size: 1.3em; line-height: 1; vertical-align: middle; -webkit-text-stroke: 1px currentColor; }
+.wind-arrow { font-size: 1.3em; line-height: 1; vertical-align: middle; -webkit-text-stroke: 1px currentColor; margin-left: 8px; }
 
 /* ---------- 3-day forecast ---------- */
 .forecast {
@@ -563,12 +563,14 @@ html, body {
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
 .forecast.week .fc-precip-icon { width: 14px; height: 14px; }
+.forecast.week .fc-precip-sum {
+  width: auto;
+}
 
 .fc-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   padding: 26px 10px 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -596,20 +598,28 @@ html, body {
   font-variant-numeric: tabular-nums;
 }
 .fc-high { font-size: 26px; font-weight: 700; }
-.fc-low { font-size: 18px; opacity: 0.7; }
+.fc-low { font-size: 18px; opacity: 0.7; font-weight: 700; }
 .fc-precip {
   font-size: 16px;
   opacity: 0.85;
-  margin-top: 2px;
+  margin-top: auto;
+  padding-top: 4px;
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 2px 5px;
   white-space: nowrap;
 }
 .fc-precip-icon {
   width: 16px;
   height: 16px;
   display: block;
+}
+.fc-precip-sum {
+  opacity: 0.85;
+  width: 100%;
+  text-align: center;
 }
 
 /* ---------- Precipitation strip ---------- */
