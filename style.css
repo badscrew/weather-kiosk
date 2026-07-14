@@ -563,7 +563,6 @@ html, body {
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
 .forecast.week .fc-precip-icon { width: 14px; height: 14px; }
-.forecast.week .fc-precip-sum { display: none; }
 
 .fc-card {
   display: flex;
