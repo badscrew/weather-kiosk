@@ -571,7 +571,6 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   padding: 26px 10px 12px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -603,7 +602,8 @@ html, body {
 .fc-precip {
   font-size: 16px;
   opacity: 0.85;
-  margin-top: 2px;
+  margin-top: auto;
+  padding-top: 4px;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
