@@ -135,10 +135,12 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
   padding: 12px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 .modal-header h2 { font-size: 16px; font-weight: 600; letter-spacing: 0.3px; }
+.modal-header .loc-gps-btn { margin-left: auto; }
 .modal-close {
   width: 36px; height: 36px;
   font-size: 22px; line-height: 1;
@@ -198,18 +200,17 @@ html, body {
 .loc-gps-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 14px;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
   background: rgba(135, 206, 250, 0.10);
   color: #f4f6fb;
   border: 1px solid rgba(135, 206, 250, 0.45);
   border-radius: 999px;
   font: inherit;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  align-self: start;
-  justify-self: start;
   transition: background-color 150ms ease, border-color 150ms ease;
 }
 .loc-gps-btn:hover, .loc-gps-btn:focus-visible {
