@@ -560,6 +560,7 @@ html, body {
 .forecast.week .fc-icon img { width: 48px; height: 48px; }
 .forecast.week .fc-cond { display: none; }
 .forecast.week .fc-humidity { display: none; }
+.forecast.week .fc-precip { margin-top: auto; }
 .forecast.week .fc-high { font-size: 22px; }
 .forecast.week .fc-low { font-size: 15px; }
 .forecast.week .fc-precip { font-size: 14px; }
@@ -603,8 +604,7 @@ html, body {
 .fc-precip {
   font-size: 16px;
   opacity: 0.85;
-  margin-top: auto;
-  padding-top: 4px;
+  margin-top: 6px;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
@@ -626,7 +626,7 @@ html, body {
 .fc-humidity {
   font-size: 16px;
   opacity: 0.85;
-  margin: 4px 0;
+  margin-top: auto;
   display: inline-flex;
   align-items: center;
   gap: 5px;

@@ -1,0 +1,105 @@
+- generic [active] [ref=f4e1]:
+  - main [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - generic [ref=f4e4]:
+        - button "London London, England, GB" [ref=f4e5] [cursor=pointer]:
+          - generic [ref=f4e6]: London
+          - generic [ref=f4e7]: London, England, GB
+        - generic [ref=f4e8]: 16:24
+        - generic [ref=f4e10]: Tuesday, Jul 14
+      - generic [ref=f4e12]:
+        - button "Tap to switch between summary and 3-hour detail" [ref=f4e13] [cursor=pointer]:
+          - img "Clear sky" [ref=f4e15]
+          - generic [ref=f4e16]:
+            - generic [ref=f4e17]: "29"
+            - generic [ref=f4e18]: °
+            - generic [ref=f4e19]: (Feels 28°)
+          - generic [ref=f4e20]:
+            - generic [ref=f4e21]: Clear sky
+            - generic [ref=f4e22]:
+              - generic [ref=f4e23]: H 29°
+              - generic [ref=f4e24]: L 17°
+          - generic [ref=f4e25]:
+            - generic [ref=f4e26]:
+              - generic [ref=f4e27]: 🌑
+              - generic [ref=f4e28]: New Moon
+            - generic [ref=f4e29]:
+              - img "Wind" [ref=f4e31]
+              - generic [ref=f4e32]:
+                - text: 18 km/h
+                - generic "E" [ref=f4e33]: ↓
+            - generic [ref=f4e34]:
+              - img "Humidity" [ref=f4e36]
+              - generic [ref=f4e37]: 33%
+            - generic [ref=f4e38]:
+              - img "Rain" [ref=f4e40]
+              - generic [ref=f4e41]: 0%
+            - generic [ref=f4e42]:
+              - img "Sunrise" [ref=f4e44]
+              - generic [ref=f4e45]: 04:59
+            - generic [ref=f4e46]:
+              - img "Sunset" [ref=f4e48]
+              - generic [ref=f4e49]: 21:12
+        - button "Tap to switch between 3-day and weekly forecast" [ref=f4e50] [cursor=pointer]:
+          - generic [ref=f4e51]:
+            - generic [ref=f4e52]: Tomorrow
+            - img "Clear sky" [ref=f4e54]
+            - generic [ref=f4e55]: Clear sky
+            - generic [ref=f4e56]:
+              - generic [ref=f4e57]: 28°
+              - generic [ref=f4e58]: 18°
+            - generic [ref=f4e59]: 55%
+            - generic [ref=f4e60]: 2%
+          - generic [ref=f4e61]:
+            - generic [ref=f4e62]: Thu
+            - img "Clear sky" [ref=f4e64]
+            - generic [ref=f4e65]: Clear sky
+            - generic [ref=f4e66]:
+              - generic [ref=f4e67]: 28°
+              - generic [ref=f4e68]: 17°
+            - generic [ref=f4e69]: 55%
+            - generic [ref=f4e70]: 4%
+          - generic [ref=f4e71]:
+            - generic [ref=f4e72]: Fri
+            - img "Mainly clear" [ref=f4e74]
+            - generic [ref=f4e75]: Mainly clear
+            - generic [ref=f4e76]:
+              - generic [ref=f4e77]: 26°
+              - generic [ref=f4e78]: 16°
+            - generic [ref=f4e79]: 59%
+            - generic [ref=f4e80]: 14%
+      - generic "Precipitation probability for the next 4 hours" [ref=f4e81]:
+        - generic [ref=f4e82]: next 4 hours
+        - generic [ref=f4e84]:
+          - generic "16:15 - 0%" [ref=f4e85]
+          - generic "16:30 - 0%" [ref=f4e86]
+          - generic "16:45 - 0%" [ref=f4e87]
+          - generic "17:00 - 0%" [ref=f4e88]: 0%
+          - generic "17:15 - 0%" [ref=f4e90]
+          - generic "17:30 - 0%" [ref=f4e91]
+          - generic "17:45 - 0%" [ref=f4e92]
+          - generic "18:00 - 0%" [ref=f4e93]: 0%
+          - generic "18:15 - 0%" [ref=f4e95]
+          - generic "18:30 - 0%" [ref=f4e96]
+          - generic "18:45 - 0%" [ref=f4e97]
+          - generic "19:00 - 0%" [ref=f4e98]: 0%
+          - generic "19:15 - 0%" [ref=f4e100]
+          - generic "19:30 - 0%" [ref=f4e101]
+          - generic "19:45 - 0%" [ref=f4e102]
+          - generic "20:00 - 0%" [ref=f4e103]: 0%
+        - generic [ref=f4e105]:
+          - generic [ref=f4e106]: 17:00
+          - generic [ref=f4e107]: 18:00
+          - generic [ref=f4e108]: 19:00
+          - generic [ref=f4e109]: 20:00
+      - generic "Data sources" [ref=f4e110]:
+        - generic [ref=f4e111]: "Data:"
+        - link "Open-Meteo" [ref=f4e112] [cursor=pointer]:
+          - /url: https://open-meteo.com/
+        - generic [ref=f4e113]: ·
+        - link "BigDataCloud" [ref=f4e114] [cursor=pointer]:
+          - /url: https://www.bigdatacloud.com/
+        - generic [ref=f4e115]: ·
+        - link "Météo-France" [ref=f4e116] [cursor=pointer]:
+          - /url: https://meteofrance.com/
+  - button "Toggle fullscreen" [ref=f4e117] [cursor=pointer]
