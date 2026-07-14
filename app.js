@@ -12,9 +12,9 @@
   // Storage key for user-selected location overrides.
   const LOC_KEY = "kiosk.location";
 
-  // Storage key for recent city searches (last 4).
+  // Storage key for recent city searches (last 5).
   const LOC_HISTORY_KEY = "kiosk.lochistory";
-  const LOC_HISTORY_MAX = 4;
+  const LOC_HISTORY_MAX = 5;
 
   // Forecast view: 3-day (default) or 7-day week. Toggled by tapping the
   // forecast area; the choice is persisted across reloads.

@@ -119,8 +119,8 @@ html, body {
 .modal-backdrop[hidden] { display: none; }
 
 .modal {
-  width: 560px;
-  max-width: 92%;
+  width: 640px;
+  max-width: 95%;
   max-height: 92%;
   background: #16213a;
   color: #f4f6fb;
@@ -257,8 +257,9 @@ html, body {
 }
 .loc-history-items {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 6px;
+  overflow: hidden;
 }
 .loc-history-chip {
   display: inline-flex;
@@ -274,9 +275,10 @@ html, body {
   cursor: pointer;
   transition: background-color 150ms ease, border-color 150ms ease;
   white-space: nowrap;
-  max-width: 100%;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 0 1 auto;
 }
 .loc-history-chip:hover, .loc-history-chip:focus-visible {
   background: rgba(135, 206, 250, 0.18);
