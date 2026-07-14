@@ -603,9 +603,10 @@ html, body {
   opacity: 0.85;
   margin-top: 2px;
   display: inline-flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  gap: 2px 5px;
   white-space: nowrap;
 }
 .fc-precip-icon {
@@ -616,6 +617,8 @@ html, body {
 .fc-precip-sum {
   font-size: 13px;
   opacity: 0.75;
+  width: 100%;
+  text-align: center;
 }
 
 /* ---------- Precipitation strip ---------- */
