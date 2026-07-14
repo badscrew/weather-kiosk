@@ -12,6 +12,10 @@
   // Storage key for user-selected location overrides.
   const LOC_KEY = "kiosk.location";
 
+  // Storage key for recent city searches (last 4).
+  const LOC_HISTORY_KEY = "kiosk.lochistory";
+  const LOC_HISTORY_MAX = 4;
+
   // Forecast view: 3-day (default) or 7-day week. Toggled by tapping the
   // forecast area; the choice is persisted across reloads.
   const FC_VIEW_KEY = "kiosk.fcview";
@@ -846,6 +850,59 @@
     "SE","CH","TW","TH","TR","UA","AE","GB","US","VN",
   ];
 
+  // ---- Search history helpers ------------------------------------------
+  // Stores up to 4 recent city selections in localStorage.
+  function loadSearchHistory() {
+    try {
+      const raw = localStorage.getItem(LOC_HISTORY_KEY);
+      if (!raw) return [];
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      return arr.slice(0, LOC_HISTORY_MAX);
+    } catch (_) { return []; }
+  }
+
+  function saveToSearchHistory(entry) {
+    // entry: { name, latitude, longitude, country_code, timezone, admin1, country }
+    const history = loadSearchHistory();
+    // Remove duplicate (same coords)
+    const filtered = history.filter(
+      (h) => !(Math.abs(h.latitude - entry.latitude) < 0.001 && Math.abs(h.longitude - entry.longitude) < 0.001)
+    );
+    // Prepend new entry and cap at 4
+    filtered.unshift({
+      name: entry.name,
+      latitude: entry.latitude,
+      longitude: entry.longitude,
+      country_code: entry.country_code || "",
+      timezone: entry.timezone || "",
+      admin1: entry.admin1 || "",
+      country: entry.country || "",
+    });
+    const capped = filtered.slice(0, LOC_HISTORY_MAX);
+    try { localStorage.setItem(LOC_HISTORY_KEY, JSON.stringify(capped)); } catch (_) {}
+  }
+
+  function renderSearchHistory() {
+    const container = $("loc-history");
+    const items = $("loc-history-items");
+    if (!container || !items) return;
+    const history = loadSearchHistory();
+    if (!history.length) { container.hidden = true; return; }
+
+    items.innerHTML = "";
+    for (const entry of history) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "loc-history-chip";
+      chip.textContent = entry.name;
+      chip.title = [entry.name, entry.admin1, entry.country].filter(Boolean).join(", ");
+      chip.addEventListener("click", () => applyChosenLocation(entry));
+      items.appendChild(chip);
+    }
+    container.hidden = false;
+  }
+
   const dialogState = { searchAbort: null, searchTimer: 0 };
 
   function openLocationDialog() {
@@ -854,6 +911,7 @@
     populateCountrySelect();
     syncLanguageSelect();
     syncCountrySelect();
+    renderSearchHistory();
     $("loc-city").value = "";
     $("loc-results").innerHTML = "";
     setHint(window.I18N ? window.I18N.t("hintPick") : "Pick a country, then search for a city.", false);
@@ -991,6 +1049,9 @@
         timezone: r.timezone || "",
       }));
     } catch (_) {}
+
+    // Save to search history (last 4 searches).
+    saveToSearchHistory(r);
 
     // Update the headline immediately and refresh data.
     $("location").textContent = r.name;

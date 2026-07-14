@@ -110,8 +110,9 @@ html, body {
   inset: 0;
   background: rgba(0, 0, 0, 0.55);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding-top: 24px;
   z-index: 100;
   cursor: default;
 }
@@ -238,6 +239,48 @@ html, body {
   flex: 1;
   height: 1px;
   background: rgba(255, 255, 255, 0.10);
+}
+
+/* ---------- Search history ---------- */
+.loc-history[hidden] { display: none; }
+.loc-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.loc-history-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.loc-history-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.loc-history-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  background: rgba(135, 206, 250, 0.08);
+  color: #f4f6fb;
+  border: 1px solid rgba(135, 206, 250, 0.30);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.loc-history-chip:hover, .loc-history-chip:focus-visible {
+  background: rgba(135, 206, 250, 0.18);
+  border-color: rgba(135, 206, 250, 0.65);
+  outline: none;
 }
 
 .clock {
