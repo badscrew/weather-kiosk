@@ -111,6 +111,20 @@
     }
   }
 
+  // Shrink the moon phase label font until it fits on one line.
+  // Some locales (e.g. French "Gibbeuse Décroissante") produce long strings
+  // that would otherwise widen the meta grid track and push the right column.
+  function fitMoonText(el) {
+    if (!el) return;
+    el.style.fontSize = "";
+    const max = 16; // default font-size in px (inherits from .today-meta)
+    const min = 10;
+    for (let size = max; size >= min; size--) {
+      el.style.fontSize = size + "px";
+      if (el.scrollWidth <= el.clientWidth) return;
+    }
+  }
+
   // ---- Units helpers ---------------------------------------------------
   const isImperial = (CFG.units || "metric").toLowerCase() === "imperial";
   const tempUnit = isImperial ? "fahrenheit" : "celsius";
@@ -405,7 +419,11 @@
       const moonName = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
       moonIconEl.innerHTML = `<img class="meta-icon" src="${moon.icon}" alt="${moonName}" />`;
     }
-    if (moonEl) moonEl.textContent = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
+    if (moonEl) {
+      moonEl.textContent = window.I18N ? window.I18N.t(moon.nameKey) : moon.nameKey.replace("moon", "");
+      // Shrink font if the moon phase text doesn't fit in one line.
+      fitMoonText(moonEl);
+    }
 
     if (daily.temperature_2m_max && daily.temperature_2m_min) {
       $("today-high").textContent = fmtInt(daily.temperature_2m_max[0]);
