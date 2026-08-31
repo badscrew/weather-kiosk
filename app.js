@@ -256,15 +256,17 @@
   }
 
   // Build an inline wind-direction arrow. The degree from the API is "wind
-  // from" direction, so we rotate the arrow 180° past that to show where
-  // the wind is blowing TO (more intuitive visually).
+  // from" direction (0°=N means wind from the north). The ↓ glyph at 0°
+  // rotation already points south (180°), so rotating by `deg` makes it
+  // point toward (180 + deg) % 360 — i.e. away from the source, showing
+  // the direction the wind is blowing TO.
   function windArrow(deg) {
     if (deg == null || isNaN(deg)) return "";
     const span = document.createElement("span");
     span.className = "wind-arrow";
     span.textContent = "↓";
     span.style.display = "inline-block";
-    span.style.transform = `rotate(${(deg + 180) % 360}deg)`;
+    span.style.transform = `rotate(${deg}deg)`;
     span.setAttribute("aria-label", compass(deg));
     return span;
   }
